@@ -115,6 +115,7 @@ export function calculateCurrentCaffeineLevel(historyData) {
     let totalCaffeine = 0
 
     for (const [timestamp, entry] of Object.entries(historyData)) {
+        if (isNaN(parseInt(timestamp))) { continue }
         const timeElapsed = currentTime - parseInt(timestamp)
 
         // Ignore entries older than 48 hours
@@ -140,6 +141,7 @@ export function getTopThreeCoffees(historyData) {
 
     // Count occurrences of each coffee type
     for (const entry of Object.values(historyData)) {
+        if (!entry || !entry.name) { continue }
         const coffeeName = entry.name
         if (coffeeCount[coffeeName]) {
             coffeeCount[coffeeName]++
@@ -204,6 +206,7 @@ export function calculateCoffeeStats(coffeeConsumptionHistory) {
     let totalDaysWithCoffee = 0
 
     for (const [timestamp, coffee] of Object.entries(coffeeConsumptionHistory)) {
+        if (!coffee || !coffee.cost || isNaN(parseInt(timestamp))) { continue }
         const date = new Date(parseInt(timestamp)).toISOString().split('T')[0] // Extract date in YYYY-MM-DD format
         const caffeine = getCaffeineAmount(coffee.name)
         const cost = parseFloat(coffee.cost)
@@ -234,11 +237,44 @@ export function calculateCoffeeStats(coffeeConsumptionHistory) {
     // Calculate average daily caffeine and average daily cost
     const averageDailyCaffeine = totalDaysWithCoffee > 0 ? (totalCaffeine / totalDaysWithCoffee).toFixed(2) : 0
     const averageDailyCost = totalDaysWithCoffee > 0 ? (totalCost / totalDaysWithCoffee).toFixed(2) : 0
-    console.log(totalCost, typeof totalCost)
+    
     return {
         daily_caffeine: averageDailyCaffeine,
         daily_cost: averageDailyCost,
         average_coffees: (totalCoffees / days).toFixed(2),
         total_cost: totalCost.toFixed(2),
     };
+}
+
+export function calculateDailyStats(historyData) {
+    const last14Days = []
+    const today = new Date()
+
+    for (let i = 13; i >= 0; i--) {
+        const d = new Date()
+        d.setDate(today.getDate() - i)
+        // Set time to start of day to avoid timezone issues when comparing just dates, 
+        // effectively we just need YYYY-MM-DD
+        const dateStr = d.toISOString().split('T')[0]
+        const shortDate = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+
+        let caffeine = 0
+        let cost = 0
+
+        for (const [timestamp, entry] of Object.entries(historyData)) {
+            if (!entry || !entry.cost || isNaN(parseInt(timestamp))) { continue }
+            const entryDate = new Date(parseInt(timestamp)).toISOString().split('T')[0]
+            if (entryDate === dateStr) {
+                caffeine += getCaffeineAmount(entry.name)
+                cost += parseFloat(entry.cost)
+            }
+        }
+
+        last14Days.push({
+            date: shortDate,
+            caffeine: caffeine,
+            cost: cost.toFixed(2)
+        })
+    }
+    return last14Days
 }

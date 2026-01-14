@@ -1,5 +1,6 @@
 import { useAuth } from "../context/AuthContext"
-import { calculateCoffeeStats, calculateCurrentCaffeineLevel, coffeeConsumptionHistory, getTopThreeCoffees, statusLevels } from "../utils"
+import { calculateCoffeeStats, calculateCurrentCaffeineLevel, coffeeConsumptionHistory, getTopThreeCoffees, statusLevels, calculateDailyStats } from "../utils"
+import CoffeeChart from "./CoffeeChart"
 
 function StatCard(props) {
     const { lg, title, children } = props
@@ -14,7 +15,7 @@ function StatCard(props) {
 export default function Stats() {
     const { globalData } = useAuth()
     const stats = calculateCoffeeStats(globalData)
-    console.log(stats)
+    const dailyStats = calculateDailyStats(globalData)
 
     const caffeineLevel = calculateCurrentCaffeineLevel(globalData)
     const warningLevel = caffeineLevel < statusLevels['low'].maxLevel ?
@@ -29,6 +30,7 @@ export default function Stats() {
                 <i className="fa-solid fa-chart-simple" />
                 <h2>Stats</h2>
             </div>
+            <CoffeeChart data={dailyStats} />
             <div className="stats-grid">
                 <StatCard lg title="Active Caffeine Level">
                     <div className="status">

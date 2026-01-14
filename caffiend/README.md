@@ -8,6 +8,9 @@ Caffiend is a comprehensive coffee consumption tracker built with React and Fire
 - **Consumption Tracking**: Log every cup of coffee with details.
 - **Stats Dashboard**: View your total caffeine intake, daily averages, and more.
 - **History Log**: A visual timeline of your coffee consumption.
+- **Visual Tracking**: Interactive charts showing your 14-day caffeine consumption trends.
+- **History Management**: View your timeline and delete incorrect entries with ease.
+- **Smart Presets**: Save your favorite custom drinks for one-click logging.
 - **Cloud Sync**: All data is stored in Firestore, so you can access it from any device.
 - **Responsive Design**: Beautiful dashboard that works on phone, tablet, and desktop.
 

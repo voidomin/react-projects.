@@ -67,6 +67,30 @@ export default function CoffeeForm(props) {
         setShowModal(false)
     }
 
+    async function handleSavePreset() {
+        if (!selectedCoffee) { return }
+        const newPreset = {
+            name: `${selectedCoffee} ($${coffeeCost})`,
+            coffeeName: selectedCoffee,
+            cost: coffeeCost
+        }
+        
+        const currentPresets = globalData?.presets || []
+        const newPresets = [...currentPresets, newPreset]
+        
+        // Update local
+        const newGlobalData = { ...(globalData || {}), presets: newPresets }
+        setGlobalData(newGlobalData)
+
+        // Update Firestore
+        try {
+            const userRef = doc(db, 'users', globalUser.uid)
+            await setDoc(userRef, { presets: newPresets }, { merge: true })
+        } catch (err) {
+            console.log(err.message)
+        }
+    }
+
     return (
         <>
             {showModal && (
@@ -78,6 +102,24 @@ export default function CoffeeForm(props) {
                 <i className="fa-solid fa-pencil" />
                 <h2>Start Tracking Today</h2>
             </div>
+            
+            {globalData?.presets?.length > 0 && (
+                <>
+                    <h4>Quick Add Custom Presets</h4>
+                    <div className="coffee-grid">
+                        {globalData.presets.map((preset, index) => (
+                            <button key={index} className="button-card" onClick={() => {
+                                setSelectedCoffee(preset.coffeeName)
+                                setCoffeeCost(preset.cost)
+                                setShowCoffeeTypes(true) // Highlights 'Other' or custom
+                            }}>
+                                <h4>{preset.name}</h4>
+                            </button>
+                        ))}
+                    </div>
+                </>
+            )}
+
             <h4>Select coffee type</h4>
             <div className="coffee-grid">
                 {coffeeOptions.slice(0, 5).map((option, optionIndex) => {
@@ -102,7 +144,7 @@ export default function CoffeeForm(props) {
             {showCoffeeTypes && (
                 <select onChange={(e) => {
                     setSelectedCoffee(e.target.value)
-                }} id="coffee-list" name="coffee-list">
+                }} id="coffee-list" name="coffee-list" value={selectedCoffee || ""}>
                     <option value={null}>Select type</option>
                     {coffeeOptions.map((option, optionIndex) => {
                         return (
@@ -144,9 +186,16 @@ export default function CoffeeForm(props) {
                     </select>
                 </div>
             </div>
-            <button onClick={handleSubmitForm}>
-                <p>Add Entry</p>
-            </button>
+            <div style={{ display: 'flex', gap: '1rem' }}>
+                <button onClick={handleSubmitForm}>
+                    <p>Add Entry</p>
+                </button>
+                {selectedCoffee && (
+                    <button onClick={handleSavePreset} className="card-button-secondary">
+                        <p>Save Preset</p>
+                    </button>
+                )}
+            </div>
         </>
     )
 }

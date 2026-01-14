@@ -1,7 +1,7 @@
 import { createUserWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from 'firebase/auth'
 import { useState, useEffect, useContext, createContext } from 'react'
 import { auth, db } from '../../firebase'
-import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { doc, getDoc, setDoc, deleteField, updateDoc } from 'firebase/firestore'
 
 const AuthContext = createContext()
 
@@ -38,13 +38,30 @@ export function AuthProvider(props) {
         }
     }
 
+    async function deleteData(timestamp) {
+        if (!timestamp) { return }
+        try {
+            const docRef = doc(db, 'users', globalUser.uid)
+            const res = await updateDoc(docRef, {
+                [timestamp]: deleteField()
+            })
+            // Update local state to reflect change immediately
+            const newData = { ...globalData }
+            delete newData[timestamp]
+            setGlobalData(newData)
+            return res
+        } catch (err) {
+            console.log(err.message)
+        }
+    }
+
     function logout() {
         setGlobalUser(null)
         setGlobalData(null)
         return signOut(auth)
     }
 
-    const value = { globalUser, globalData, setGlobalData, isLoading, signup, login, logout, writeData }
+    const value = { globalUser, globalData, setGlobalData, isLoading, signup, login, logout, writeData, deleteData }
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {

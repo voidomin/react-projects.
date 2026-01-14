@@ -2,8 +2,7 @@ import { useAuth } from "../context/AuthContext";
 import { calculateCurrentCaffeineLevel, coffeeConsumptionHistory, getCaffeineAmount, timeSinceConsumption } from "../utils";
 
 export default function History() {
-    const { globalData } = useAuth()
-
+    const { globalData, deleteData } = useAuth()
     return (
         <>
             <div className="section-header">
@@ -25,6 +24,21 @@ export default function History() {
                     return (
                         <div title={summary} key={coffeeIndex}>
                             <i className="fa-solid fa-mug-hot" />
+                            <button 
+                                onClick={() => deleteData(utcTime)} 
+                                style={{ 
+                                    background: 'none', 
+                                    border: 'none', 
+                                    boxShadow: 'none', 
+                                    color: 'var(--color-error)', // Assuming you have an error color variable or use 'red'
+                                    padding: 0,
+                                    marginLeft: '0.5rem',
+                                    fontSize: '0.8rem',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                <i className="fa-solid fa-trash" />
+                            </button>
                         </div>
                     )
                 })}
