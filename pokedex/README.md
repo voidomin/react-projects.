@@ -5,8 +5,9 @@ A modern, responsive Pokedex application built with React and Vite. This applica
 ## Features
 
 - **Browse Pokemon**: View an extensive list of Pokemon with clean, card-based UI.
-- **Search & Filter**: Quickly find your favorite Pokemon.
-- **Detailed Stats**: Click on any Pokemon to view their stats, types, and evolution chains.
+- **Search & Filter**: Find Pokemon by name or filter by one of the 18 elemental types.
+- **Team Builder**: Create and manage your dream team of up to 6 Pokemon.
+- **Detailed Stats**: Click on any Pokemon to view their stats, types, moves, and evolution chains.
 - **Favorites System**: reliable local storage implementation lets you save your favorite Pokemon to a personalized list.
 - **Generation 2 Support**: Dynamic loading to fetch and display Pokemon from the second generation.
 - **Responsive Design**: Works seamlessly on desktop and mobile devices.

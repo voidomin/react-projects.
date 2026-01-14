@@ -1,6 +1,7 @@
 import Header from "./components/Header";
 import PokeCard from "./components/PokeCard";
 import SideNav from "./components/SideNav";
+import Modal from "./components/Modal";
 import { first151Pokemon } from "./utils";
 
 import { useState } from "react";
@@ -30,6 +31,27 @@ function App() {
     setIsSideMenuOpen(!isSideMenuOpen);
   }
 
+  const [showTeamModal, setShowTeamModal] = useState(false)
+  const [team, setTeam] = useState(() => {
+    const saved = localStorage.getItem("pokedex-team");
+    return saved ? JSON.parse(saved) : [];
+  })
+
+  function handleToggleTeam(id) {
+    if (team.includes(id)) {
+        // remove
+        const newTeam = team.filter(t => t !== id)
+        setTeam(newTeam)
+        localStorage.setItem('pokedex-team', JSON.stringify(newTeam))
+    } else {
+        // add if < 6
+        if (team.length >= 6) { return }
+        const newTeam = [...team, id]
+        setTeam(newTeam)
+        localStorage.setItem('pokedex-team', JSON.stringify(newTeam))
+    }
+  }
+
   function handleCloseMenu() {
     setIsSideMenuOpen(false);
   }
@@ -53,7 +75,7 @@ function App() {
 
   return (
     <>
-      <Header handleToggleMenu={handleToggleMenu} />
+      <Header handleToggleMenu={handleToggleMenu} handleToggleTeamModal={() => setShowTeamModal(true)} />
       <SideNav
         isSideMenuOpen={isSideMenuOpen}
         selectedPokemon={selectedPokemon}
@@ -61,13 +83,36 @@ function App() {
         handleCloseMenu={handleCloseMenu}
         pokemonList={pokemonList}
         handleLoadGen2={handleLoadGen2}
+        handleToggleTeamModal={() => setShowTeamModal(true)}
       />
       <PokeCard 
         selectedPokemon={selectedPokemon} 
         isFavorite={favorites.includes(selectedPokemon)}
         onToggleFavorite={() => handleToggleFavorite(selectedPokemon)}
+        onToggleTeam={() => handleToggleTeam(selectedPokemon)}
+        isInTeam={team.includes(selectedPokemon)}
+        teamSize={team.length}
         setSelectedPokemon={setSelectedPokemon} // For evolution chain nav
       />
+      {showTeamModal && (
+        <Modal handleCloseModal={() => setShowTeamModal(false)}>
+            {/* Team Content */}
+            <h2 className="text-gradient">My Team</h2>
+            <div className="team-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', padding: '1rem 0' }}>
+                {team.map((memberId, index) => (
+                   <div key={index} onClick={() => { setSelectedPokemon(memberId); setShowTeamModal(false) }} style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', padding: '0.5rem', border: '1px solid var(--border-primary)', borderRadius: '0.5rem' }}>
+                        <p>#{memberId + 1}</p>
+                        <p><strong>{pokemonList[memberId]}</strong></p>
+                        <button onClick={(e) => {
+                            e.stopPropagation()
+                            handleToggleTeam(memberId)
+                        }} style={{ fontSize: '0.8rem', padding: '0.2rem 0.5rem', background: 'var(--color-error, red)', color: 'white', border: 'none', borderRadius: '4px' }}>Remove</button>
+                   </div> 
+                ))}
+                {team.length === 0 && <p>No Pokemon in team yet!</p>}
+            </div>
+        </Modal>
+      )}
     </>
   );
 }

@@ -4,7 +4,7 @@ import TypeCard from "./TypeCard";
 import Modal from "./Modal";
 
 export default function PokeCard(props) {
-  const { selectedPokemon, onToggleFavorite, isFavorite, setSelectedPokemon } =
+  const { selectedPokemon, onToggleFavorite, isFavorite, setSelectedPokemon, onToggleTeam, isInTeam, teamSize } =
     props;
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -227,6 +227,16 @@ export default function PokeCard(props) {
         <div style={{ display: 'flex', gap: '10px' }}>
             <button key="cry" onClick={playCry} className="header-icon-button" title="Play Cry">
                 <i className="fa-solid fa-volume-high"></i>
+            </button>
+            <button 
+                key="team" 
+                onClick={onToggleTeam} 
+                className="header-icon-button" 
+                title={isInTeam ? "Remove from Team" : "Add to Team"}
+                disabled={!isInTeam && teamSize >= 6}
+                style={{ opacity: (!isInTeam && teamSize >= 6) ? 0.5 : 1 }}
+            >
+                <i className={isInTeam ? "fa-solid fa-minus" : "fa-solid fa-plus"} style={{ color: isInTeam ? 'var(--color-link, blue)' : 'inherit' }}></i>
             </button>
             <button key="fav" onClick={onToggleFavorite} className="header-icon-button" title="Toggle Favorite">
                 <i className={isFavorite ? "fa-solid fa-heart" : "fa-regular fa-heart"} style={{ color: isFavorite ? 'red' : 'inherit' }}></i>

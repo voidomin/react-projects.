@@ -2,9 +2,10 @@ import {
   first151Pokemon,
   getFullPokedexNumber,
   getPokedexNumber,
+  pokemonTypeColors
 } from "../utils";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function SideNav(props) {
   const {
@@ -17,29 +18,51 @@ export default function SideNav(props) {
   } = props;
 
   const [searchValue, setSearchValue] = useState("");
+  const [selectedType, setSelectedType] = useState('all')
+  const [typeCache, setTypeCache] = useState({})
+  const [isLoadingType, setIsLoadingType] = useState(false)
+
+  useEffect(() => {
+    if (selectedType === 'all' || typeCache[selectedType]) { return }
+    async function fetchTypeData() {
+        setIsLoadingType(true)
+        try {
+            const res = await fetch(`https://pokeapi.co/api/v2/type/${selectedType}`)
+            const data = await res.json()
+            const names = data.pokemon.map(p => p.pokemon.name)
+            setTypeCache(prev => ({...prev, [selectedType]: names}))
+        } catch (err) {
+            console.log(err.message)
+        } finally {
+            setIsLoadingType(false)
+        }
+    }
+    fetchTypeData()
+  }, [selectedType])
 
   const filteredPokemon = pokemonList.filter((ele, eleIndex) => {
-    // if full pokedex number includes the current search value, return true
-    if (getFullPokedexNumber(eleIndex).includes(searchValue)) {
-      return true;
-    }
+    const searchMatch = getFullPokedexNumber(eleIndex).includes(searchValue) || ele.toLowerCase().includes(searchValue.toLowerCase())
+    
+    if (!searchMatch) return false
 
-    // if the pokemon name includes the current search value, return true
-    if (ele.toLowerCase().includes(searchValue.toLowerCase())) {
-      return true;
+    if (selectedType !== 'all') {
+        if (isLoadingType) return false
+        if (!typeCache[selectedType]) return false
+        return typeCache[selectedType].includes(ele.toLowerCase())
     }
-
-    // otherwise, exclude value from the array
-    return false;
+    return true
   });
 
   return (
     <nav className={" " + (isSideMenuOpen ? " open" : "")}>
       <div className={"header " + (isSideMenuOpen ? " open" : "")}>
-        <button onClick={handleCloseMenu} className="open-nav-button">
+        <button onClick={handleCloseMenu} className="open-nav-button only-mobile">
           <i className="fa-solid fa-arrow-left-long"></i>
         </button>
         <h1 className="text-gradient">Pokédex</h1>
+        <button onClick={props.handleToggleTeamModal} className="open-nav-button" style={{ marginLeft: 'auto' }}>
+            <i className="fa-solid fa-users"></i>
+        </button>
       </div>
       <input
         placeholder="E.g. 001 or Bulba..."
@@ -48,6 +71,14 @@ export default function SideNav(props) {
           setSearchValue(e.target.value);
         }}
       />
+      <div style={{ padding: '0.5rem 0' }}>
+          <select value={selectedType} onChange={(e) => setSelectedType(e.target.value)} style={{ width: '100%', padding: '0.5rem', borderRadius: '0.5rem', border: '1px solid #ccc' }}>
+              <option value="all">All Types</option>
+              {Object.keys(pokemonTypeColors).map(type => (
+                  <option key={type} value={type}>{type.charAt(0).toUpperCase() + type.slice(1)}</option>
+              ))}
+          </select>
+      </div>
       {filteredPokemon.map((pokemon, pokemonIndex) => {
         const truePokedexNumber = pokemonList.indexOf(pokemon);
         return (
