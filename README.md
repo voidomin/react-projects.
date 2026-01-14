@@ -1,43 +1,34 @@
 # React Full Course Projects
 
-This repository contains two React applications built and enhanced during the course.
+This repository contains three React applications built and enhanced during the course, demonstrating various levels of complexity and state management.
 
-## 1. Pokedex App 🟢🔴
-A feature-rich Pokedex application utilizing the PokeAPI.
+## 1. ☕ Caffiend
+A full-stack coffee tracking application built with **React** and **Firebase**.
+- **Auth**: Secure Sign Up & Login.
+- **Data**: Real-time Firestore updates and history tracking.
+- **Analytics**: Visualize daily caffeine intake and costs.
 
-### ✨ Key Features
-*   **Search**: Filter Pokemon by name or Pokédex number.
-*   **Gen 1 & Gen 2**: Browse the first 251 Pokemon (Kanto & Johto).
-*   **Evolution Chain**: Interactive family tree - click any evolution to jump to it! 🧬
-*   **Combat Info**: Real-time Type Effectiveness analysis (Weaknesses & Resistances). ⚔️
-*   **Audio Cries**: Button to play the official 8-bit Pokemon cry. 🔊
-*   **Favorites**: Heart button to save your favorite Pokemon (persisted locally). ❤️
-*   **Detailed Stats**: Height, Weight, Abilities, and Base Stats visualization.
+## 2. 🟢 Pokedex
+A feature-rich Pokedex utilizing the **PokeAPI**.
+- **Search**: Filter Pokemon by name or number.
+- **Gen 2 Support**: View details for the first 251 Pokemon.
+- **Interactive**: Evolution chains, type effectiveness, and audio cries.
 
-## 2. Todo App ✅
-A robust task management application.
-
-### ✨ Key Features
-*   **Smart Editing**: Click "Edit" to modify existing tasks effortlessly.
-*   **Drag & Drop**: Reorder tasks intuitively. 🖱️
-*   **Categories**: Tag tasks as **General**, **Work**, or **Personal** with color-coded badges.
-*   **Filters**: View All, Active, or Completed tasks.
-*   **Persistence**: All data remains safe in LocalStorage.
+## 3. ✅ Todo App
+A robust task management application with local persistence.
+- **Categories**: Tag tasks (Work, Personal, General).
+- **Tabs**: Filter by Active or Completed status.
+- **CRUD**: Edit, delete, and reorder tasks easily.
 
 ## 🚀 How to Run
 
-Each project is a standalone Vite application.
+Each project is a standalone Vite application. navigate to the folder and run:
 
-### Pokedex
 ```bash
-cd pokedex
+# Example for Caffiend
+cd caffiend
 npm install
 npm run dev
 ```
 
-### Todo App
-```bash
-cd todo-app
-npm install
-npm run dev
-```
+Repeat the same commands for `pokedex` or `todo-app`.

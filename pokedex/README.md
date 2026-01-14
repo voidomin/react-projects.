@@ -1,16 +1,37 @@
-# React + Vite
+# Pokedex
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, responsive Pokedex application built with React and Vite. This application allows users to explore Pokemon data, managing their favorites and viewing details using the PokeAPI.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Browse Pokemon**: View an extensive list of Pokemon with clean, card-based UI.
+- **Search & Filter**: Quickly find your favorite Pokemon.
+- **Detailed Stats**: Click on any Pokemon to view their stats, types, and evolution chains.
+- **Favorites System**: reliable local storage implementation lets you save your favorite Pokemon to a personalized list.
+- **Generation 2 Support**: Dynamic loading to fetch and display Pokemon from the second generation.
+- **Responsive Design**: Works seamlessly on desktop and mobile devices.
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Framework**: React 19
+- **Build Tool**: Vite
+- **Styling**: Vanilla CSS (w/ specialized layout components)
+- **Data Source**: [PokeAPI](https://pokeapi.co/)
+- **Persistence**: LocalStorage
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1.  **Install Dependencies**
+    ```bash
+    npm install
+    ```
+
+2.  **Run Development Server**
+    ```bash
+    npm run dev
+    ```
+
+3.  **Build for Production**
+    ```bash
+    npm run build
+    ```
