@@ -160,7 +160,7 @@ hr {
   border-radius: 4px;
   margin-right: 8px;
   background: var(--background-primary);
-  color: white;
+  color: var(--color-primary);
   cursor: pointer;
   outline: none;
   width: auto;

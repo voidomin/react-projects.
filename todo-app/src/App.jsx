@@ -15,6 +15,30 @@ function App() {
   const [inputValue, setInputValue] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("General");
 
+  // Dark Mode
+  const [darkMode, setDarkMode] = useState(() => {
+    const saved = localStorage.getItem('todo-dark-mode');
+    if (saved !== null) {
+        return saved === 'true';
+    }
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  })
+
+  useEffect(() => {
+    if (darkMode) {
+        document.body.classList.add('dark-mode')
+        document.body.classList.remove('light-mode')
+    } else {
+        document.body.classList.remove('dark-mode')
+        document.body.classList.add('light-mode')
+    }
+    localStorage.setItem('todo-dark-mode', darkMode)
+  }, [darkMode])
+
+  function toggleDarkMode() {
+      setDarkMode(curr => !curr)
+  }
+
   function handleAddTodo(newTodo) {
     const newTodoList = [
       ...todos,
@@ -56,6 +80,17 @@ function App() {
     handleSaveData(newTodoList);
   }
   
+  function handleUpdateTodo(id, updatedFields) {
+      const newTodoList = todos.map((todo) => {
+          if (todo.id === id) {
+              return { ...todo, ...updatedFields };
+          }
+          return todo;
+      });
+      setTodos(newTodoList);
+      handleSaveData(newTodoList);
+  }
+
   function handleReorderTodos(newOrder) {
       setTodos(newOrder);
       handleSaveData(newOrder);
@@ -87,7 +122,7 @@ function App() {
 
   return (
     <>
-      <Header todos={todos} />
+      <Header todos={todos} darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
       <Tabs
         selectedTab={selectedTab}
         setSelectedTab={setSelectedTab}
@@ -98,6 +133,7 @@ function App() {
         handleDeleteTodo={handleDeleteTodo}
         handleEditTodo={handleEditTodo}
         handleReorderTodos={handleReorderTodos}
+        handleUpdateTodo={handleUpdateTodo}
         selectedTab={selectedTab}
         todos={todos}
       />

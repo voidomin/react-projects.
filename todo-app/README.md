@@ -5,10 +5,12 @@ A sleek and functional Todo Application built with React. Keep track of your dai
 ## Features
 
 - **Full CRUD Operations**: Add, Edit, Delete, and Complete tasks with ease.
+- **Dark Mode**: Switch between Light and Dark themes with a single click.
+- **Sub-tasks**: Break down complex tasks into smaller, manageable steps.
 - **Categorization**: Organize todos into custom categories (e.g., General, Work, Personal).
 - **Tab Filter**: Quickly switch between "Open" and "Completed" tasks.
 - **Drag & Drop**: Reorder your tasks to prioritize your day.
-- **Data Persistence**: Your tasks are saved automatically to LocalStorage, so you never lose your list.
+- **Data Persistence**: Your tasks and preferences are saved automatically to LocalStorage.
 
 ## Tech Stack
 
