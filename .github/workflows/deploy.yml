@@ -25,51 +25,35 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "18"
-          cache: "npm"
-
-      - name: Install root dependencies
-        run: npm install
-
-      - name: Install vocab dependencies
-        working-directory: ./vocab
-        run: npm install
 
       - name: Build vocab
         working-directory: ./vocab
-        run: npm run build
-
-      - name: Install todo-app dependencies
-        working-directory: ./todo-app
-        run: npm install
+        run: npm install && npm run build
 
       - name: Build todo-app
         working-directory: ./todo-app
-        run: npm run build
-
-      - name: Install pokedex dependencies
-        working-directory: ./pokedex
-        run: npm install
+        run: npm install && npm run build
 
       - name: Build pokedex
         working-directory: ./pokedex
-        run: npm run build
-
-      - name: Install caffiend dependencies
-        working-directory: ./caffiend
-        run: npm install
+        run: npm install && npm run build
 
       - name: Build caffiend
         working-directory: ./caffiend
-        run: npm run build
+        run: npm install && npm run build
 
       - name: Create deployment structure
         run: |
           mkdir -p dist
-          cp index.html dist/
-          mkdir -p dist/vocab && cp -r vocab/dist/* dist/vocab/
-          mkdir -p dist/todo-app && cp -r todo-app/dist/* dist/todo-app/
-          mkdir -p dist/pokedex && cp -r pokedex/dist/* dist/pokedex/
-          mkdir -p dist/caffiend && cp -r caffiend/dist/* dist/caffiend/
+          cp index.html dist/index.html
+          mkdir -p dist/vocab
+          cp -r vocab/dist/* dist/vocab/
+          mkdir -p dist/todo-app
+          cp -r todo-app/dist/* dist/todo-app/
+          mkdir -p dist/pokedex
+          cp -r pokedex/dist/* dist/pokedex/
+          mkdir -p dist/caffiend
+          cp -r caffiend/dist/* dist/caffiend/
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
