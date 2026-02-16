@@ -16,7 +16,7 @@
 
   /* Label colors - default to light for dark mode */
   --label-color: #fcd34d;
-  
+
   /* Helper colors for overlays, borders, shadows */
   --overlay-dark: rgba(0, 0, 0, 0.3);
   --overlay-light: rgba(255, 255, 255, 0.1);

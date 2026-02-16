@@ -1,11 +1,8 @@
-name: Deploy Vocab App to GitHub Pages
+name: Deploy All React Apps to GitHub Pages
 
 on:
   push:
     branches: [main]
-    paths:
-      - "vocab/**"
-      - ".github/workflows/deploy.yml"
   workflow_dispatch:
 
 permissions:
@@ -29,15 +26,50 @@ jobs:
         with:
           node-version: "18"
           cache: "npm"
-          cache-dependency-path: "vocab/package-lock.json"
 
-      - name: Install dependencies
+      - name: Install root dependencies
+        run: npm install
+
+      - name: Install vocab dependencies
         working-directory: ./vocab
         run: npm install
 
-      - name: Build
+      - name: Build vocab
         working-directory: ./vocab
         run: npm run build
+
+      - name: Install todo-app dependencies
+        working-directory: ./todo-app
+        run: npm install
+
+      - name: Build todo-app
+        working-directory: ./todo-app
+        run: npm run build
+
+      - name: Install pokedex dependencies
+        working-directory: ./pokedex
+        run: npm install
+
+      - name: Build pokedex
+        working-directory: ./pokedex
+        run: npm run build
+
+      - name: Install caffiend dependencies
+        working-directory: ./caffiend
+        run: npm install
+
+      - name: Build caffiend
+        working-directory: ./caffiend
+        run: npm run build
+
+      - name: Create deployment structure
+        run: |
+          mkdir -p dist
+          cp index.html dist/
+          mkdir -p dist/vocab && cp -r vocab/dist/* dist/vocab/
+          mkdir -p dist/todo-app && cp -r todo-app/dist/* dist/todo-app/
+          mkdir -p dist/pokedex && cp -r pokedex/dist/* dist/pokedex/
+          mkdir -p dist/caffiend && cp -r caffiend/dist/* dist/caffiend/
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -45,7 +77,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: "vocab/dist"
+          path: "dist"
 
       - name: Deploy to GitHub Pages
         id: deployment

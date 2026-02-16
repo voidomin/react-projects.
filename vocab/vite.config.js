@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
-  base: "/react-projects/",
+  base: "/react-projects/vocab/",
   build: {
     outDir: "dist",
     assetsDir: "assets",
