@@ -1,0 +1,41 @@
+[
+  {
+    "word": "phylogenetics",
+    "definition": "The study of evolutionary relationships among species or groups of organisms.",
+    "etymology": "Greek: phylon (tribe) + genesis (origin)",
+    "forms": {
+      "noun": ["phylogenetic"],
+      "verb": [],
+      "adjective": ["phylogenetic"],
+      "adverb": []
+    },
+    "status": "published",
+    "createdAt": "2026-02-15T00:00:00.000Z"
+  },
+  {
+    "word": "ubiquitous",
+    "definition": "Present, appearing, or found everywhere.",
+    "etymology": "Latin: ubique (everywhere)",
+    "forms": {
+      "noun": [],
+      "verb": [],
+      "adjective": ["ubiquitous"],
+      "adverb": ["ubiquitously"]
+    },
+    "status": "published",
+    "createdAt": "2026-02-15T00:01:00.000Z"
+  },
+  {
+    "word": "elucidate",
+    "definition": "Make (something) clear; explain.",
+    "etymology": "Latin: elucidare (to make clear)",
+    "forms": {
+      "noun": [],
+      "verb": ["elucidate"],
+      "adjective": ["elucidative"],
+      "adverb": ["elucidatively"]
+    },
+    "status": "published",
+    "createdAt": "2026-02-15T00:02:00.000Z"
+  }
+]

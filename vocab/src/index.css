@@ -1,0 +1,399 @@
+@import "tailwindcss";
+
+:root {
+  /* Theme colors are set dynamically by ThemeContext */
+  /* These are fallback defaults */
+  --bg: #1a1a2e;
+  --card: #16213e;
+  --text: #f5e6d3;
+  --muted: #a89476;
+  --accent: #f6ad55;
+  --accent-2: #fb923c;
+
+  /* Alias primary to accent for consistency */
+  --primary: var(--accent);
+  --secondary: var(--accent);
+
+  /* Label colors - default to light for dark mode */
+  --label-color: #fcd34d;
+  
+  /* Helper colors for overlays, borders, shadows */
+  --overlay-dark: rgba(0, 0, 0, 0.3);
+  --overlay-light: rgba(255, 255, 255, 0.1);
+  --border-accent: rgba(217, 126, 82, 0.3);
+  --border-accent-hover: rgba(217, 126, 82, 0.4);
+  --border-accent-subtle: rgba(217, 126, 82, 0.2);
+  --bg-accent-subtle: rgba(217, 126, 82, 0.1);
+  --bg-accent-medium: rgba(217, 126, 82, 0.2);
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --gradient-progress: linear-gradient(90deg, #d97e52, #9db8a8);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+
+.container {
+  @apply px-4 py-4 max-w-5xl mx-auto;
+}
+
+.header {
+  @apply flex items-center justify-between py-4 border-b border-gray-800;
+}
+
+.tabs {
+  @apply flex gap-2;
+}
+
+.tabs button {
+  @apply px-4 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-amber-50 transition-colors md:px-6 md:py-3;
+}
+
+.card {
+  @apply bg-gray-800/60 rounded-xl p-5 mb-4 shadow-md border border-amber-800/40 hover:border-amber-700/60 transition-all md:p-7;
+  animation: cardPop 0.18s ease both;
+  position: relative;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(217, 126, 82, 0.4),
+    transparent
+  );
+  border-radius: 11px 11px 0 0;
+}
+
+.card:hover {
+  @apply shadow-lg transform -translate-y-1 bg-gray-700/70;
+}
+
+.card.removing {
+  @apply opacity-0 scale-95;
+  transform: translateY(8px) scale(0.98);
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+}
+
+@keyframes cardPop {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.form-row {
+  @apply flex gap-2 mb-3;
+}
+
+input,
+textarea,
+select {
+  @apply w-full px-4 py-3 rounded-lg bg-gray-800 border border-amber-900/40 text-amber-50 placeholder-gray-400;
+  @apply focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent focus:ring-offset-2 focus:ring-offset-gray-900 transition-all md:px-5 md:py-3.5;
+  @apply font-medium text-sm;
+}
+
+button {
+  @apply px-4 py-2.5 rounded-lg font-semibold transition-all cursor-pointer;
+  @apply bg-amber-700 hover:bg-amber-600 hover:shadow-md text-amber-50 active:scale-95 md:px-5 md:py-3;
+  @apply border border-amber-600 hover:border-amber-500;
+}
+
+button:disabled {
+  @apply opacity-40 cursor-not-allowed;
+}
+
+.btn-accent {
+  @apply bg-linear-to-r from-green-700 to-green-600 hover:from-green-600 hover:to-green-500;
+}
+
+.modal-container {
+  @apply fixed inset-0 flex items-center justify-center z-50;
+  animation: fadeIn 0.12s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-underlay {
+  @apply absolute inset-0 bg-black/80 backdrop-blur-sm;
+}
+
+.modal-content {
+  @apply relative z-10 rounded-xl p-6 shadow-2xl;
+  background: var(--card);
+  border: 1px solid var(--primary);
+  max-width: 700px;
+  width: 90vw;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+/* Light mode modal adjustments */
+[data-theme="light"] .modal-content {
+  background: var(--card);
+  border-color: var(--muted);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Dark mode modal adjustments */
+[data-theme="dark"] .modal-content {
+  background: var(--card);
+  border-color: rgba(217, 126, 82, 0.3);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  @apply font-bold text-white;
+}
+
+h2 {
+  @apply text-2xl mb-3;
+}
+
+h3 {
+  @apply text-lg mb-2;
+}
+
+h4 {
+  @apply text-base;
+}
+
+.small {
+  @apply text-amber-300 font-medium text-sm;
+}
+
+.tags {
+  @apply flex flex-wrap gap-0.5 mt-3;
+}
+
+.tag {
+  @apply inline-block px-3 py-1.5 rounded-full text-xs font-semibold;
+  @apply bg-green-900/40 text-green-200 border border-green-700/50;
+  @apply hover:bg-green-800/60 hover:border-green-600/70 hover:shadow-md cursor-pointer transition-all;
+}
+
+.search {
+  @apply flex flex-col gap-3 my-4 mb-6;
+}
+
+.search input {
+  @apply w-full;
+  font-weight: 500;
+}
+
+.search input::placeholder {
+  @apply text-gray-500;
+  letter-spacing: 0.3px;
+}
+
+.filter-pills {
+  @apply flex flex-wrap gap-2 mt-3 pb-2;
+}
+
+.filter-pills .pill {
+  @apply px-3 py-1.5 rounded-full text-xs cursor-pointer font-semibold;
+  @apply bg-gray-700/60 hover:bg-gray-600/80 text-amber-50 transition-all shadow-sm;
+  @apply border border-gray-600/60;
+}
+
+.filter-pills .pill:hover {
+  @apply scale-105 shadow-md;
+}
+
+.filter-pills .pill.active {
+  @apply bg-linear-to-r from-green-600 to-green-700 text-white border-green-500/70 shadow-lg font-bold;
+}
+/* Responsive Design */
+@media (max-width: 640px) {
+  .container {
+    @apply px-3 py-3 max-w-full;
+  }
+
+  .header {
+    @apply flex-col items-start justify-start gap-4;
+  }
+
+  h1 {
+    @apply text-2xl;
+  }
+
+  .tabs {
+    @apply flex-col w-full;
+  }
+
+  .tabs button {
+    @apply w-full justify-center;
+  }
+
+  .form-row {
+    @apply flex flex-col;
+  }
+
+  .card {
+    @apply p-3 mb-2;
+  }
+
+  input,
+  textarea,
+  select {
+    @apply text-base;
+  }
+
+  .modal-content {
+    @apply max-w-sm p-4;
+  }
+
+  button {
+    @apply w-full;
+  }
+}
+
+/* Tablet sizes */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .container {
+    @apply max-w-3xl;
+  }
+}
+
+/* Large screens */
+@media (min-width: 1025px) {
+  .tabs {
+    @apply flex-row;
+  }
+
+  .form-row {
+    @apply flex-row;
+  }
+}
+
+/* Light mode text color overrides */
+[data-theme="light"] {
+  --text-light: var(--text);
+  --text-dark: var(--text);
+  --label-color: #1f2937;
+  --overlay-dark: rgba(0, 0, 0, 0.08);
+  --overlay-light: rgba(0, 0, 0, 0.03);
+  --border-accent: color-mix(in srgb, var(--accent) 30%, transparent);
+  --border-accent-hover: color-mix(in srgb, var(--accent) 50%, transparent);
+  --border-accent-subtle: color-mix(in srgb, var(--accent) 20%, transparent);
+  --bg-accent-subtle: color-mix(in srgb, var(--accent) 10%, transparent);
+  --bg-accent-medium: color-mix(in srgb, var(--accent) 20%, transparent);
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --gradient-progress: linear-gradient(90deg, var(--accent), var(--primary));
+}
+
+[data-theme="dark"] {
+  --label-color: #fcd34d;
+  --overlay-dark: rgba(0, 0, 0, 0.3);
+  --overlay-light: rgba(255, 255, 255, 0.1);
+  --border-accent: rgba(217, 126, 82, 0.3);
+  --border-accent-hover: rgba(217, 126, 82, 0.4);
+  --border-accent-subtle: rgba(217, 126, 82, 0.2);
+  --bg-accent-subtle: rgba(217, 126, 82, 0.1);
+  --bg-accent-medium: rgba(217, 126, 82, 0.2);
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --gradient-progress: linear-gradient(90deg, #d97e52, #9db8a8);
+}
+
+/* Ensure labels are ALWAYS visible in both modes */
+label {
+  color: var(--label-color) !important;
+}
+
+/* Target label classes specifically */
+label.text-amber-200,
+label.text-sm,
+.text-sm.font-semibold.text-amber-200 {
+  color: var(--label-color) !important;
+}
+
+/* Dark mode - use light text colors for amber classes */
+[data-theme="dark"] .text-amber-50,
+[data-theme="dark"] .text-amber-100,
+[data-theme="dark"] .text-amber-200,
+[data-theme="dark"] .text-amber-300,
+[data-theme="dark"] .text-amber-400 {
+  color: #fcd34d !important;
+}
+
+/* Override all light text colors in light mode to dark */
+[data-theme="light"] .text-amber-50,
+[data-theme="light"] .text-amber-100,
+[data-theme="light"] .text-amber-200,
+[data-theme="light"] .text-amber-300,
+[data-theme="light"] .text-amber-400,
+[data-theme="light"] .text-white,
+[data-theme="light"] h1,
+[data-theme="light"] h2,
+[data-theme="light"] h3,
+[data-theme="light"] h4,
+[data-theme="light"] h5,
+[data-theme="light"] h6,
+[data-theme="light"] p {
+  color: #1f2937 !important;
+}
+
+/* Labels and small text in light mode - use explicit dark color */
+[data-theme="light"] label,
+[data-theme="light"] .small,
+[data-theme="light"] .modal-content label,
+[data-theme="light"] .modal-content .text-amber-200,
+[data-theme="light"] .modal-content .text-amber-50 {
+  color: #1f2937 !important;
+}
+
+[data-theme="light"] .text-gray-400,
+[data-theme="light"] .text-gray-500,
+[data-theme="light"] .hover\:text-amber-100:hover {
+  color: var(--text) !important;
+}
+
+/* Fix opacity variants in light mode */
+[data-theme="light"] .text-amber-200\/80,
+[data-theme="light"] .text-amber-200\/70,
+[data-theme="light"] .text-amber-300\/60,
+[data-theme="light"] .text-amber-200\/60 {
+  color: var(--text) !important;
+  opacity: 0.8;
+}
+
+/* Error messages should remain red */
+[data-theme="light"] .text-red-400 {
+  color: #dc2626 !important;
+}
+
+/* Placeholder text */
+[data-theme="light"] input::placeholder,
+[data-theme="light"] textarea::placeholder {
+  color: var(--muted) !important;
+  opacity: 0.7;
+}
