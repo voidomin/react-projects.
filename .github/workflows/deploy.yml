@@ -33,21 +33,22 @@ jobs:
         working-directory: ./caffiend
         run: npm install && npm run build
 
-      - name: Create deployment structure
+      - name: Create docs folder structure
         run: |
-          mkdir -p dist
-          cp index.html dist/index.html
-          mkdir -p dist/vocab
-          cp -r vocab/dist/* dist/vocab/
-          mkdir -p dist/todo-app
-          cp -r todo-app/dist/* dist/todo-app/
-          mkdir -p dist/pokedex
-          cp -r pokedex/dist/* dist/pokedex/
-          mkdir -p dist/caffiend
-          cp -r caffiend/dist/* dist/caffiend/
+          mkdir -p docs
+          cp index.html docs/index.html
+          mkdir -p docs/vocab
+          cp -r vocab/dist/* docs/vocab/
+          mkdir -p docs/todo-app
+          cp -r todo-app/dist/* docs/todo-app/
+          mkdir -p docs/pokedex
+          cp -r pokedex/dist/* docs/pokedex/
+          mkdir -p docs/caffiend
+          cp -r caffiend/dist/* docs/caffiend/
 
-      - name: Deploy with peaceiris
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+      - name: Commit and push if changed
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add docs
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: update docs folder with latest builds" && git push)
