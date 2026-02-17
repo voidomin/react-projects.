@@ -50,6 +50,7 @@ jobs:
         run: |
           mkdir -p docs
           cp index.html docs/index.html
+          cp favicon.svg docs/favicon.svg
           mkdir -p docs/vocab
           cp -r vocab/dist/* docs/vocab/
           mkdir -p docs/todo-app

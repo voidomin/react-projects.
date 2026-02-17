@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="React Projects">
+  <defs>
+    <linearGradient id="rpGradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2f6f62" />
+      <stop offset="100%" stop-color="#d07b45" />
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="18" fill="#fffaf4" />
+  <rect x="6" y="6" width="52" height="52" rx="16" fill="url(#rpGradient)" />
+  <path d="M19 43V21h14.5c4 0 6.5 2.6 6.5 6.2 0 3.8-2.5 6.4-6.5 6.4H26v9.4H19zm7-15.6h6.5c1.8 0 2.8-1.1 2.8-2.6 0-1.4-1-2.4-2.8-2.4H26v5z" fill="#fffaf4" />
+</svg>

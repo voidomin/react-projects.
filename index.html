@@ -3,8 +3,27 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>React Projects - A Collection of Modern Web Apps</title>
+    <title>React Projects Studio</title>
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
+      :root {
+        --ink: #13110f;
+        --clay: #2a201b;
+        --sand: #f6efe6;
+        --sienna: #d07b45;
+        --ember: #f2b36b;
+        --moss: #2f6f62;
+        --sky: #dde7e3;
+        --card: #fffaf4;
+        --shadow: 0 20px 50px rgba(15, 12, 10, 0.18);
+      }
+
       * {
         margin: 0;
         padding: 0;
@@ -12,273 +31,467 @@
       }
 
       body {
-        font-family:
-          -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-          "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-          sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        font-family: "Space Grotesk", sans-serif;
+        color: var(--ink);
         min-height: 100vh;
-        padding: 20px;
+        background:
+          radial-gradient(
+            circle at 10% 20%,
+            rgba(242, 179, 107, 0.35),
+            transparent 45%
+          ),
+          radial-gradient(
+            circle at 90% 0%,
+            rgba(47, 111, 98, 0.35),
+            transparent 40%
+          ),
+          linear-gradient(130deg, #f4e7d3, #f7f3ec 55%, #e7f1eb 100%);
+        padding: 32px 22px 60px;
+      }
+
+      .grain {
+        position: fixed;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+        mix-blend-mode: multiply;
+        pointer-events: none;
+        z-index: 0;
       }
 
       .container {
         max-width: 1200px;
         margin: 0 auto;
+        position: relative;
+        z-index: 1;
       }
 
-      header {
-        text-align: center;
-        color: white;
-        margin-bottom: 60px;
-        margin-top: 40px;
+      .top-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 48px;
       }
 
-      h1 {
-        font-size: 3.5rem;
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
         font-weight: 700;
-        margin-bottom: 10px;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        font-size: 0.95rem;
       }
 
-      .subtitle {
-        font-size: 1.2rem;
-        opacity: 0.95;
-        font-weight: 300;
-        letter-spacing: 0.5px;
+      .logo-badge {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--moss), var(--sienna));
+        display: grid;
+        place-items: center;
+        color: #fffaf4;
+        font-weight: 700;
+      }
+
+      .pill {
+        padding: 8px 14px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.6);
+        border: 1px solid rgba(19, 17, 15, 0.1);
+        font-size: 0.85rem;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 30px;
+        align-items: center;
+        margin-bottom: 48px;
+        animation: rise 0.9s ease both;
+      }
+
+      .hero h1 {
+        font-family: "Fraunces", serif;
+        font-size: clamp(2.6rem, 4vw, 4.2rem);
+        color: var(--clay);
+        line-height: 1.05;
+        margin-bottom: 18px;
+      }
+
+      .hero p {
+        font-size: 1.05rem;
+        line-height: 1.7;
+        color: rgba(19, 17, 15, 0.75);
+        margin-bottom: 24px;
+      }
+
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .btn-primary,
+      .btn-ghost {
+        text-decoration: none;
+        border-radius: 999px;
+        padding: 12px 22px;
+        font-weight: 600;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--moss), #3c8f7f);
+        color: #fffaf4;
+        box-shadow: 0 15px 30px rgba(47, 111, 98, 0.3);
+      }
+
+      .btn-ghost {
+        color: var(--clay);
+        border: 1px solid rgba(42, 32, 27, 0.2);
+        background: rgba(255, 255, 255, 0.7);
+      }
+
+      .btn-primary:hover,
+      .btn-ghost:hover {
+        transform: translateY(-2px);
+      }
+
+      .hero-panel {
+        background: var(--card);
+        border-radius: 26px;
+        padding: 28px;
+        box-shadow: var(--shadow);
+      }
+
+      .hero-panel h3 {
+        font-size: 1.05rem;
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+        color: rgba(42, 32, 27, 0.7);
+        margin-bottom: 14px;
+      }
+
+      .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .stat {
+        background: #fff;
+        border-radius: 16px;
+        padding: 16px;
+        border: 1px solid rgba(19, 17, 15, 0.08);
+      }
+
+      .stat strong {
+        display: block;
+        font-size: 1.4rem;
+        color: var(--moss);
+      }
+
+      .stat span {
+        font-size: 0.85rem;
+        color: rgba(19, 17, 15, 0.6);
       }
 
       .apps-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 30px;
-        margin-bottom: 60px;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 24px;
+        margin: 36px 0 50px;
       }
 
       .app-card {
-        background: white;
-        border-radius: 16px;
-        padding: 30px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-        cursor: pointer;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
+        background: #fff;
+        border-radius: 22px;
+        padding: 26px;
+        border: 1px solid rgba(19, 17, 15, 0.08);
+        box-shadow: var(--shadow);
+        display: grid;
+        gap: 16px;
         position: relative;
         overflow: hidden;
+        animation: floatIn 0.6s ease both;
       }
 
-      .app-card::before {
+      .app-card:nth-child(2) {
+        animation-delay: 0.1s;
+      }
+
+      .app-card:nth-child(3) {
+        animation-delay: 0.2s;
+      }
+
+      .app-card:nth-child(4) {
+        animation-delay: 0.3s;
+      }
+
+      .app-card::after {
         content: "";
         position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, #667eea, #764ba2);
+        inset: auto -40% -40% auto;
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 30% 30%,
+          rgba(242, 179, 107, 0.35),
+          transparent 70%
+        );
       }
 
-      .app-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      .app-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: var(--clay);
       }
 
       .app-icon {
-        font-size: 3rem;
-        margin-bottom: 15px;
-        display: inline-block;
-      }
-
-      .app-card h2 {
-        font-size: 1.8rem;
-        color: #333;
-        margin-bottom: 10px;
-        font-weight: 600;
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        display: grid;
+        place-items: center;
+        font-size: 1.4rem;
+        background: var(--sky);
       }
 
       .app-card p {
-        color: #666;
         line-height: 1.6;
-        margin-bottom: 20px;
-        flex-grow: 1;
-        font-size: 0.95rem;
+        color: rgba(19, 17, 15, 0.72);
       }
 
       .features {
-        list-style: none;
-        margin-bottom: 20px;
+        display: grid;
+        gap: 8px;
+        font-size: 0.9rem;
+        color: rgba(19, 17, 15, 0.6);
       }
 
-      .features li {
-        color: #555;
-        padding: 5px 0;
-        font-size: 0.9rem;
+      .features span {
         display: flex;
         align-items: center;
+        gap: 8px;
       }
 
-      .features li::before {
-        content: "✓";
-        color: #667eea;
-        font-weight: bold;
-        margin-right: 8px;
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--sienna);
       }
 
       .app-link {
-        display: inline-block;
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        color: white;
-        padding: 12px 24px;
-        border-radius: 8px;
+        justify-self: start;
+        padding: 10px 18px;
+        border-radius: 12px;
+        background: var(--clay);
+        color: #fffaf4;
         text-decoration: none;
         font-weight: 600;
-        transition: all 0.3s ease;
-        text-align: center;
-        border: none;
-        cursor: pointer;
-        font-size: 1rem;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+        box-shadow: 0 12px 20px rgba(42, 32, 27, 0.2);
       }
 
       .app-link:hover {
-        transform: scale(1.05);
-        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        transform: translateY(-2px);
       }
 
       footer {
-        text-align: center;
-        color: white;
-        padding: 30px 0;
-        border-top: 1px solid rgba(255, 255, 255, 0.2);
-        margin-top: 60px;
-        opacity: 0.9;
-        font-size: 0.95rem;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 12px;
+        padding-top: 24px;
+        border-top: 1px solid rgba(19, 17, 15, 0.15);
+        font-size: 0.9rem;
+        color: rgba(19, 17, 15, 0.6);
       }
 
       .github-link {
-        color: white;
+        color: var(--moss);
         text-decoration: none;
         font-weight: 600;
-        transition: opacity 0.3s;
       }
 
-      .github-link:hover {
-        opacity: 0.8;
-        text-decoration: underline;
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
 
-      @media (max-width: 768px) {
-        h1 {
-          font-size: 2.2rem;
+      @keyframes floatIn {
+        from {
+          opacity: 0;
+          transform: translateY(18px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 780px) {
+        .top-bar {
+          flex-direction: column;
+          align-items: flex-start;
         }
 
-        .subtitle {
-          font-size: 1rem;
-        }
-
-        .apps-grid {
-          grid-template-columns: 1fr;
-          gap: 20px;
-        }
-
-        .app-card h2 {
-          font-size: 1.5rem;
+        footer {
+          flex-direction: column;
+          align-items: flex-start;
         }
       }
     </style>
   </head>
   <body>
+    <div class="grain" aria-hidden="true"></div>
     <div class="container">
-      <header>
-        <h1>React Projects</h1>
-        <p class="subtitle">
-          A collection of modern, feature-rich web applications
-        </p>
-      </header>
+      <div class="top-bar">
+        <div class="logo">
+          <div class="logo-badge">RP</div>
+          React Projects Studio
+        </div>
+        <div class="pill">4 apps · 1 unified launchpad</div>
+      </div>
+
+      <section class="hero">
+        <div>
+          <h1>Fresh builds, bold ideas, and four apps ready to explore.</h1>
+          <p>
+            A curated set of React + Vite experiences with polished UI, real
+            data flows, and focused product craft. Pick a card, launch a build,
+            and see each app in action.
+          </p>
+          <div class="hero-actions">
+            <a class="btn-primary" href="./vocab/">Start with Vocab</a>
+            <a
+              class="btn-ghost"
+              href="https://github.com/voidomin/react-projects"
+              target="_blank"
+              >View Source</a
+            >
+          </div>
+        </div>
+        <div class="hero-panel">
+          <h3>Studio Pulse</h3>
+          <div class="stat-grid">
+            <div class="stat">
+              <strong>4</strong>
+              <span>Live apps</span>
+            </div>
+            <div class="stat">
+              <strong>12+</strong>
+              <span>Core features</span>
+            </div>
+            <div class="stat">
+              <strong>100%</strong>
+              <span>Responsive</span>
+            </div>
+            <div class="stat">
+              <strong>Vite</strong>
+              <span>Fast builds</span>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <div class="apps-grid">
-        <!-- Vocab App -->
         <div class="app-card">
-          <div class="app-icon">📚</div>
-          <h2>Vocab Mastery</h2>
+          <div class="app-title">
+            <div class="app-icon">📚</div>
+            Vocab Mastery
+          </div>
           <p>
-            Master foreign language vocabulary using the proven SRS (Spaced
-            Repetition System) technique. Learn smarter, not harder.
+            Spaced repetition vocabulary trainer with themed decks,
+            import/export, and smooth flashcards.
           </p>
-          <ul class="features">
-            <li>Spaced repetition algorithm</li>
-            <li>Multiple theme palettes</li>
-            <li>Import/Export support</li>
-            <li>Beautiful flashcards</li>
-          </ul>
+          <div class="features">
+            <span><span class="dot"></span>Smart review scheduling</span>
+            <span><span class="dot"></span>Multiple palette modes</span>
+            <span><span class="dot"></span>Fast learning loops</span>
+          </div>
           <a href="./vocab/" class="app-link">Launch App</a>
         </div>
 
-        <!-- Todo App -->
         <div class="app-card">
-          <div class="app-icon">✅</div>
-          <h2>Todo Manager</h2>
+          <div class="app-title">
+            <div class="app-icon">✅</div>
+            Todo Manager
+          </div>
           <p>
-            Organize your tasks effortlessly with a clean, intuitive todo
-            application. Stay productive and focused on what matters.
+            Streamlined task tracking with filters, persistence, and a
+            focus-first UI.
           </p>
-          <ul class="features">
-            <li>Create & manage tasks</li>
-            <li>Mark complete/incomplete</li>
-            <li>Filter by status</li>
-            <li>Local storage persistence</li>
-          </ul>
+          <div class="features">
+            <span><span class="dot"></span>Priority-ready workflows</span>
+            <span><span class="dot"></span>Status filters</span>
+            <span><span class="dot"></span>Instant updates</span>
+          </div>
           <a href="./todo-app/" class="app-link">Launch App</a>
         </div>
 
-        <!-- Pokedex App -->
         <div class="app-card">
-          <div class="app-icon">🔴</div>
-          <h2>Pokedex Explorer</h2>
+          <div class="app-title">
+            <div class="app-icon">🔴</div>
+            Pokedex Explorer
+          </div>
           <p>
-            Explore the complete Pokédex with detailed information about every
-            Pokémon. Search, filter, and discover your favorites.
+            An interactive Pokedex with search, type filters, and stat-rich
+            views.
           </p>
-          <ul class="features">
-            <li>Browse all Pokémon</li>
-            <li>Filter by type</li>
-            <li>Detailed stats & info</li>
-            <li>Responsive design</li>
-          </ul>
+          <div class="features">
+            <span><span class="dot"></span>Full Pokedex data</span>
+            <span><span class="dot"></span>Type collections</span>
+            <span><span class="dot"></span>Responsive layout</span>
+          </div>
           <a href="./pokedex/" class="app-link">Launch App</a>
         </div>
 
-        <!-- Caffiend App -->
         <div class="app-card">
-          <div class="app-icon">☕</div>
-          <h2>Caffiend Tracker</h2>
+          <div class="app-title">
+            <div class="app-icon">☕</div>
+            Caffiend Tracker
+          </div>
           <p>
-            Track your caffeine consumption with real-time statistics. Monitor
-            your coffee intake and build healthier drinking habits.
+            Monitor caffeine intake with Firebase-backed profiles and real-time
+            stats.
           </p>
-          <ul class="features">
-            <li>Track caffeine intake</li>
-            <li>Live statistics & charts</li>
-            <li>Firebase integration</li>
-            <li>User authentication</li>
-          </ul>
+          <div class="features">
+            <span><span class="dot"></span>Live caffeine totals</span>
+            <span><span class="dot"></span>Charts + history</span>
+            <span><span class="dot"></span>Secure auth</span>
+          </div>
           <a href="./caffiend/" class="app-link">Launch App</a>
         </div>
       </div>
 
       <footer>
-        <p>
-          Built with React & Vite |
-          <a
-            href="https://github.com/voidomin/react-projects"
-            class="github-link"
-            target="_blank"
-            >View on GitHub</a
-          >
-        </p>
-        <p style="margin-top: 10px; font-size: 0.9rem; opacity: 0.8">
-          © 2026 React Projects Collection. All apps are fully functional and
-          ready to use.
-        </p>
+        <span>Built with React + Vite · 2026</span>
+        <a
+          href="https://github.com/voidomin/react-projects"
+          class="github-link"
+          target="_blank"
+          >View on GitHub</a
+        >
       </footer>
     </div>
   </body>
