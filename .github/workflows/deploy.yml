@@ -34,6 +34,13 @@ jobs:
 
       - name: Build caffiend
         working-directory: ./caffiend
+        env:
+          VITE_FIREBASE_APIKEY: ${{ secrets.VITE_FIREBASE_APIKEY }}
+          VITE_FIREBASE_AUTHDOMAIN: ${{ secrets.VITE_FIREBASE_AUTHDOMAIN }}
+          VITE_FIREBASE_PROJECTID: ${{ secrets.VITE_FIREBASE_PROJECTID }}
+          VITE_FIREBASE_STORAGEBUCKET: ${{ secrets.VITE_FIREBASE_STORAGEBUCKET }}
+          VITE_FIREBASE_MESSAGINGSENDERID: ${{ secrets.VITE_FIREBASE_MESSAGINGSENDERID }}
+          VITE_FIREBASE_APPID: ${{ secrets.VITE_FIREBASE_APPID }}
         run: npm install && npm run build
 
       - name: Create docs folder structure
