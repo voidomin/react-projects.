@@ -60,5 +60,6 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+          git pull --rebase
           git add docs
           git diff --quiet && git diff --staged --quiet || (git commit -m "chore: update docs folder with latest builds" && git push)
