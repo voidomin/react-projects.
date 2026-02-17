@@ -4,7 +4,7 @@ import react from "@vitejs/plugin-react";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: "/caffiend/",
+  base: "/react-projects./caffiend/",
   build: {
     outDir: "dist",
     assetsDir: "assets",
