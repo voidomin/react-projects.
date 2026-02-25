@@ -1202,7 +1202,8 @@
         background: var(--card-bg);
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
         overflow: visible;
-      }
+          justify-content: center; /* center buttons when expanded */
+          }
 
       .theme-toggle .theme-btn {
         /* Reset button appearance */
@@ -1228,6 +1229,34 @@
           opacity 0.2s 0s,
           transform 0.15s ease;
       }
+      /* Compact display shown when collapsed */
+      .theme-display {
+        width: 40px;
+        height: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 1.1rem;
+        pointer-events: none;
+        transition: opacity 0.18s ease;
+        color: inherit;
+      }
+
+      /* Hide compact display while expanded */
+      .theme-toggle:hover .theme-display,
+      .theme-toggle:focus-within .theme-display {
+        opacity: 0;
+        width: 0;
+        padding: 0;
+        margin-right: 0;
+        visibility: hidden;
+      }
+
+      /* Keep compact display visible when collapsed */
+      .theme-toggle .theme-display {
+        opacity: 1;
+      }
       .theme-toggle:hover .theme-btn,
       .theme-toggle:focus-within .theme-btn {
         opacity: 1;
@@ -1235,8 +1264,8 @@
         transition: opacity 0.2s 0.1s;
       }
       .theme-toggle .theme-btn:first-child {
-        opacity: 1;
-        pointer-events: auto;
+        opacity: 0;
+        pointer-events: none;
         transition: opacity 0.2s 0s;
       }
 
@@ -1472,20 +1501,6 @@
       <div class="parallax-circle" style="width: 250px; height: 250px"></div>
     </div>
 
-    <!-- Particle Canvas -->
-    <canvas id="particle-canvas"></canvas>
-
-    <!-- Additional Parallax Layers -->
-    <div class="parallax-layer" style="top: 10%; left: 5%">
-      <div class="parallax-circle"></div>
-    </div>
-    <div class="parallax-layer" style="bottom: 15%; right: 10%">
-      <div class="parallax-square"></div>
-    </div>
-    <div class="parallax-layer" style="top: 50%; left: 70%">
-      <div class="parallax-circle" style="width: 250px; height: 250px"></div>
-    </div>
-
     <!-- Scroll Progress Bar -->
     <div class="scroll-progress"></div>
 
@@ -1563,17 +1578,10 @@
           <div class="pill">6 apps · 1 unified launchpad</div>
         </div>
         <div class="theme-toggle">
-          <button class="theme-btn active" id="light-btn" title="Light Mode">
-            ☀️
-          </button>
+          <div id="theme-display" class="theme-display" aria-hidden="true">☀️</div>
+          <button class="theme-btn active" id="light-btn" title="Light Mode">☀️</button>
           <button class="theme-btn" id="dark-btn" title="Dark Mode">🌙</button>
-          <button
-            class="theme-btn"
-            id="easter-egg-btn"
-            title="Easter Eggs & Secrets"
-          >
-            🎮
-          </button>
+          <button class="theme-btn" id="easter-egg-btn" title="Easter Eggs & Secrets">🎮</button>
         </div>
       </div>
 
@@ -1812,6 +1820,7 @@
       // ===== THEME SWITCHING SYSTEM =====
       const lightBtn = document.getElementById("light-btn");
       const darkBtn = document.getElementById("dark-btn");
+      const themeDisplay = document.getElementById('theme-display');
       const body = document.body;
 
       // Load saved theme
@@ -1821,6 +1830,16 @@
         lightBtn.classList.remove("active");
         darkBtn.classList.add("active");
       }
+
+      // ensure display matches initial theme
+      function updateThemeDisplay() {
+        if (body.classList.contains('matrix-theme')) themeDisplay.textContent = '🔰';
+        else if (body.classList.contains('retro-theme')) themeDisplay.textContent = '🎮';
+        else if (body.classList.contains('greyscale-theme')) themeDisplay.textContent = '⚫';
+        else if (body.classList.contains('dark-mode')) themeDisplay.textContent = '🌙';
+        else themeDisplay.textContent = '☀️';
+      }
+      updateThemeDisplay();
 
       lightBtn.addEventListener("click", () => {
         body.classList.remove(
@@ -1832,6 +1851,7 @@
         lightBtn.classList.add("active");
         darkBtn.classList.remove("active");
         localStorage.setItem("theme", "light");
+        updateThemeDisplay();
       });
 
       darkBtn.addEventListener("click", () => {
@@ -1840,6 +1860,7 @@
         darkBtn.classList.add("active");
         lightBtn.classList.remove("active");
         localStorage.setItem("theme", "dark");
+        updateThemeDisplay();
       });
 
       // Easter Egg Button - Show Instructions
@@ -2056,6 +2077,9 @@
 
         themeRotation = (themeRotation + 1) % themes.length;
 
+        // Update collapsed display
+        if (typeof updateThemeDisplay === 'function') updateThemeDisplay();
+
         // Show notification
         showNotification(
           `Theme: ${themes[themeRotation === 0 ? 3 : themeRotation - 1].replace("-theme", "").toUpperCase()}!`,
@@ -2067,6 +2091,7 @@
         body.classList.add("matrix-theme");
         lightBtn.classList.remove("active");
         darkBtn.classList.remove("active");
+        updateThemeDisplay();
         showNotification("🔰 MATRIX MODE ACTIVATED");
       }
 
@@ -2075,6 +2100,7 @@
         body.classList.add("retro-theme");
         lightBtn.classList.remove("active");
         darkBtn.classList.remove("active");
+        updateThemeDisplay();
         showNotification("🎮 RETRO 80s MODE ACTIVATED");
       }
 
@@ -2083,6 +2109,7 @@
         body.classList.add("greyscale-theme");
         lightBtn.classList.remove("active");
         darkBtn.classList.remove("active");
+        updateThemeDisplay();
         showNotification("⚫ GREYSCALE MODE ACTIVATED");
       }
 
