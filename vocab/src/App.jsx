@@ -5,7 +5,6 @@ import VocabList from "./components/VocabList";
 import Flashcards from "./components/Flashcards";
 import ReviewQueue from "./components/ReviewQueue";
 import VocabStats from "./components/VocabStats";
-import Onboarding from "./components/Onboarding";
 import { useVocab } from "./context/VocabContext";
 
 export default function App() {
@@ -20,7 +19,6 @@ export default function App() {
         {tab === "flashcards" && <Flashcards />}
         {tab === "review" && <ReviewQueue />}
         {tab === "stats" && <VocabStats />}
-        {items.length === 0 && <Onboarding />}
       </main>
     </Layout>
   );
