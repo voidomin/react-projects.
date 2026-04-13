@@ -26,6 +26,12 @@ export function FavoritesProvider({ children }) {
     setFavorites((prev) => prev.filter((m) => m.id !== movieId));
   }, []);
 
+  const updateNote = useCallback((movieId, note) => {
+    setFavorites((prev) =>
+      prev.map((m) => (m.id === movieId ? { ...m, notes: note } : m)),
+    );
+  }, []);
+
   const isFavorite = useCallback(
     (movieId) => {
       return favorites.some((m) => m.id === movieId);
@@ -45,8 +51,14 @@ export function FavoritesProvider({ children }) {
   );
 
   const value = useMemo(
-    () => ({ favorites, toggleFavorite, isFavorite, removeFavorite }),
-    [favorites, isFavorite, removeFavorite, toggleFavorite],
+    () => ({
+      favorites,
+      toggleFavorite,
+      isFavorite,
+      removeFavorite,
+      updateNote,
+    }),
+    [favorites, isFavorite, removeFavorite, toggleFavorite, updateNote],
   );
 
   return (

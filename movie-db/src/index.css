@@ -798,11 +798,155 @@ select:focus-visible,
   cursor: pointer;
   transition:
     border-color 0.2s ease,
-    color 0.2s ease,
     background-color 0.2s ease,
-    transform 0.12s ease,
-    box-shadow 0.2s ease;
+    color 0.2s ease;
+}
+
+/* Genre Badges Enhancements */
+.detail-genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 1.25rem 0;
+}
+
+.genre-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 0.95rem;
+  background: var(--bg-muted);
+  color: var(--muted);
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  transition: all 0.24s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.genre-badge.clickable {
+  cursor: pointer;
+}
+
+.genre-badge.clickable:hover {
+  background: var(--accent-strong);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(177, 95, 59, 0.2);
+}
+
+/* Search Highlights */
+.search-highlight {
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  padding: 0 1px;
+  border-radius: 2px;
+  font-weight: 600;
+}
+
+.command-palette-item.selected .search-highlight {
+  background: rgba(255, 255, 255, 0.3);
+  color: #fff;
+}
+
+/* Personal Note Section */
+.personal-note-section {
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  background: var(--bg-muted);
+  border-radius: var(--radius);
+  border: 1px dashed var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.note-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
+.note-input {
   width: 100%;
+  min-height: 100px;
+  padding: 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-elevated);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  resize: vertical;
+  transition: border-color 0.2s;
+}
+
+.note-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* Scroll Result Transitions and Grid Reordering */
+.movie-grid {
+  /* Ensure smooth reordering with layout prop */
+  backface-visibility: hidden;
+}
+
+/* Scroll To Top Button */
+.scroll-top-btn {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  color: var(--accent-strong);
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  z-index: 90;
+}
+
+.scroll-top-btn:hover {
+  background: var(--accent-soft);
+  transform: translateY(-4px) !important;
+}
+
+/* Animations */
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes page-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes card-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.1rem;
+  }
+  .main-content {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .navbar {
+    padding: 0 1rem;
+  }
 }
 
 .fav-btn:active {

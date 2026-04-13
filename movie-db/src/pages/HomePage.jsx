@@ -1,4 +1,6 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { useSearchParams } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   getTrending,
   searchMovies,
@@ -115,9 +117,12 @@ function buildProviderNotice(status) {
 }
 
 export default function HomePage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialQuery = searchParams.get("query") || "";
+
   const [movies, setMovies] = useState([]);
-  const [searchText, setSearchText] = useState("");
-  const [query, setQuery] = useState("");
+  const [searchText, setSearchText] = useState(initialQuery);
+  const [query, setQuery] = useState(initialQuery);
   const [sortBy, setSortBy] = useState("relevance");
   const [typeFilter, setTypeFilter] = useState("all");
   const [mediaType, setMediaType] = useState(() => {
@@ -147,6 +152,7 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [providerNotice, setProviderNotice] = useState(null);
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const loadMoreTriggerRef = useRef(null);
 
   const availableTypes = useMemo(() => {
@@ -300,6 +306,15 @@ export default function HomePage() {
     fetchMovies(query, 1);
   }, [query, mediaType, providerMode, fetchMovies]);
 
+  // Handle URL param changes (e.g. from genre click)
+  useEffect(() => {
+    const fromUrl = searchParams.get("query");
+    if (fromUrl !== null && fromUrl !== query) {
+      setSearchText(fromUrl);
+      setQuery(fromUrl);
+    }
+  }, [searchParams, query]);
+
   useEffect(() => {
     const timerId = setTimeout(() => {
       const trimmed = searchText.trim();
@@ -307,13 +322,25 @@ export default function HomePage() {
 
       if (trimmed) {
         addRecentSearch(trimmed);
+        setSearchParams({ query: trimmed });
+      } else {
+        setSearchParams({});
       }
     }, 450);
 
     return () => {
       clearTimeout(timerId);
     };
-  }, [searchText, addRecentSearch]);
+  }, [searchText, addRecentSearch, setSearchParams]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrolled = document.documentElement.scrollTop || document.body.scrollTop;
+      setShowScrollTop(scrolled > 600);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   function handleMediaTypeChange(newMediaType) {
     setMediaType(newMediaType);
@@ -349,6 +376,9 @@ export default function HomePage() {
     setQuery(trimmed);
     if (trimmed) {
       addRecentSearch(trimmed);
+      setSearchParams({ query: trimmed });
+    } else {
+      setSearchParams({});
     }
   }
 
@@ -356,6 +386,7 @@ export default function HomePage() {
     setSearchText(term);
     setQuery(term);
     addRecentSearch(term);
+    setSearchParams({ query: term });
   }
 
   function handleClearRecentSearches() {
@@ -371,6 +402,7 @@ export default function HomePage() {
   function handleClearSearch() {
     setSearchText("");
     setQuery("");
+    setSearchParams({});
   }
 
   function handleResetFilters() {
@@ -384,6 +416,10 @@ export default function HomePage() {
     const next = page + 1;
     setPage(next);
     fetchMovies(query, next);
+  }
+
+  function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   useEffect(() => {
@@ -603,55 +639,77 @@ export default function HomePage() {
               )}
             </div>
           </section>
-          {loading && movies.length === 0 && (
-            <div className="movie-grid movie-grid-skeleton" aria-hidden="true">
-              {HOME_SKELETON_IDS.map((skeletonId) => (
-                <div
-                  key={skeletonId}
-                  className="movie-card movie-card-skeleton"
-                >
-                  <div className="skeleton-block skeleton-poster" />
-                  <div className="card-info">
-                    <div className="skeleton-block skeleton-line skeleton-line-title" />
-                    <div className="skeleton-row">
-                      <div className="skeleton-block skeleton-line skeleton-line-meta" />
-                      <div className="skeleton-block skeleton-pill" />
+          
+          <AnimatePresence mode="popLayout">
+            {loading && movies.length === 0 ? (
+              <motion.div 
+                key="skeletons"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="movie-grid movie-grid-skeleton" 
+                aria-hidden="true"
+              >
+                {HOME_SKELETON_IDS.map((skeletonId) => (
+                  <div
+                    key={skeletonId}
+                    className="movie-card movie-card-skeleton"
+                  >
+                    <div className="skeleton-block skeleton-poster" />
+                    <div className="card-info">
+                      <div className="skeleton-block skeleton-line skeleton-line-title" />
+                      <div className="skeleton-row">
+                        <div className="skeleton-block skeleton-line skeleton-line-meta" />
+                        <div className="skeleton-block skeleton-pill" />
+                      </div>
+                      <div className="skeleton-block skeleton-button" />
                     </div>
-                    <div className="skeleton-block skeleton-button" />
                   </div>
+                ))}
+              </motion.div>
+            ) : displayedMovies.length === 0 && !loading ? (
+              <motion.div 
+                key="empty"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="empty-state search-empty-state"
+              >
+                <p className="empty-icon">No results found</p>
+                <p className="state-body">{emptyStateMessage}</p>
+                <div className="state-actions center">
+                  {query ? (
+                    <button className="btn-primary" onClick={handleClearSearch}>
+                      Show Featured Picks
+                    </button>
+                  ) : (
+                    <button className="btn-primary" onClick={handleRetry}>
+                      Reload Picks
+                    </button>
+                  )}
+                  {hasActiveFilters && (
+                    <button className="btn-subtle" onClick={handleResetFilters}>
+                      Reset Filters
+                    </button>
+                  )}
                 </div>
-              ))}
-            </div>
-          )}
-          {displayedMovies.length === 0 && !loading && (
-            <div className="empty-state search-empty-state">
-              <p className="empty-icon">No results found</p>
-              <p className="state-body">{emptyStateMessage}</p>
-              <div className="state-actions center">
-                {query ? (
-                  <button className="btn-primary" onClick={handleClearSearch}>
-                    Show Featured Picks
-                  </button>
-                ) : (
-                  <button className="btn-primary" onClick={handleRetry}>
-                    Reload Picks
-                  </button>
-                )}
-                {hasActiveFilters && (
-                  <button className="btn-subtle" onClick={handleResetFilters}>
-                    Reset Filters
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
-          {displayedMovies.length > 0 && (
-            <div className="movie-grid">
-              {displayedMovies.map((movie) => (
-                <MovieCard key={movie.id} movie={movie} />
-              ))}
-            </div>
-          )}
+              </motion.div>
+            ) : (
+              <motion.div 
+                key="grid"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="movie-grid"
+              >
+                <AnimatePresence>
+                  {displayedMovies.map((movie) => (
+                    <MovieCard key={movie.id} movie={movie} />
+                  ))}
+                </AnimatePresence>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {loading && movies.length > 0 && (
             <div className="spinner">Loading more...</div>
           )}
@@ -664,6 +722,22 @@ export default function HomePage() {
           )}
         </>
       )}
+
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 20 }}
+            className="scroll-top-btn"
+            onClick={scrollToTop}
+            aria-label="Scroll to top"
+            title="Scroll to top"
+          >
+            ↑
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

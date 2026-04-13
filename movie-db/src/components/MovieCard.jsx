@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
-import { getPosterUrl } from "../utils/movieApi";
+import { motion } from "framer-motion";
+import { getPosterSources, prefetchMovieDetails } from "../utils/movieApi";
 import { useFavorites } from "../context/useFavorites";
 import SmartImage from "./SmartImage";
 
@@ -33,8 +34,19 @@ export default function MovieCard({
     }
   }
 
+  function handlePrefetch() {
+    prefetchMovieDetails(movie.id);
+  }
+
   return (
-    <div className={`movie-card ${compact ? "compact" : ""}`}>
+    <motion.div
+      className={`movie-card ${compact ? "compact" : ""}`}
+      layout
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -5, transition: { duration: 0.2 } }}
+      onMouseEnter={handlePrefetch}
+    >
       <div className="card-poster-shell">
         {showQuickRemove && (
           <button
@@ -49,18 +61,22 @@ export default function MovieCard({
         <Link to={`/movie/${movie.id}`} className="movie-card-link">
           <div className="card-poster-wrapper">
             <SmartImage
-              src={getPosterUrl(movie.poster_path)}
-              fallbackSrc={getPosterUrl(null)}
+              srcs={getPosterSources(movie)}
               alt={movie.title}
               className="card-poster"
               wrapperClassName="card-poster-image"
               loading="lazy"
             />
-            <div className="card-overlay">
+            <motion.div
+              className="card-overlay"
+              initial={{ opacity: 0 }}
+              whileHover={{ opacity: 1 }}
+              transition={{ duration: 0.25 }}
+            >
               <p className="card-overview">
                 {movie.overview || "No description available."}
               </p>
-            </div>
+            </motion.div>
           </div>
         </Link>
       </div>
@@ -87,7 +103,7 @@ export default function MovieCard({
           {fav ? "♥ Saved" : "♡ Save"}
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

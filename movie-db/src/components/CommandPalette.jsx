@@ -9,6 +9,23 @@ function getMovieYear(movie) {
   return movie.release_date.slice(0, 4);
 }
 
+function highlightText(text, query) {
+  if (!query.trim()) return text;
+  
+  const parts = text.split(new RegExp(`(${query})`, "gi"));
+  return (
+    <span>
+      {parts.map((part, i) => 
+        part.toLowerCase() === query.toLowerCase() ? (
+          <mark key={i} className="search-highlight">{part}</mark>
+        ) : (
+          part
+        )
+      )}
+    </span>
+  );
+}
+
 export default function CommandPalette() {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -22,7 +39,8 @@ export default function CommandPalette() {
   const getRecentSearches = useCallback(() => {
     try {
       const stored = localStorage.getItem(RECENT_SEARCHES_STORAGE_KEY);
-      return stored ? JSON.parse(stored).slice(0, 3) : [];
+      const parsed = stored ? JSON.parse(stored) : [];
+      return Array.isArray(parsed) ? parsed.slice(0, 3) : [];
     } catch {
       return [];
     }
@@ -48,20 +66,32 @@ export default function CommandPalette() {
         } else if (e.key === "ArrowDown") {
           e.preventDefault();
           setSelectedIndex((prev) =>
-            prev < results.length - 1 ? prev + 1 : prev,
+            prev < (displayResults.length + (showRecent ? recentSearches.length : 0)) - 1 ? prev + 1 : prev,
           );
         } else if (e.key === "ArrowUp") {
           e.preventDefault();
           setSelectedIndex((prev) => (prev > 0 ? prev - 1 : -1));
-        } else if (e.key === "Enter" && selectedIndex >= 0) {
+        } else if (e.key === "Enter") {
           e.preventDefault();
-          const selected = results[selectedIndex];
-          if (selected?.id) {
-            navigate(`/movie/${selected.id}`);
-            setIsOpen(false);
-            setQuery("");
-            setResults([]);
-            setSelectedIndex(-1);
+          
+          if (selectedIndex >= 0) {
+            let selected;
+            if (showRecent && selectedIndex < recentSearches.length) {
+              setQuery(recentSearches[selectedIndex]);
+              setSelectedIndex(-1);
+              return;
+            } else {
+              const resultIndex = showRecent ? selectedIndex - recentSearches.length : selectedIndex;
+              selected = displayResults[resultIndex];
+            }
+
+            if (selected?.id) {
+              navigate(`/movie/${selected.id}`);
+              setIsOpen(false);
+              setQuery("");
+              setResults([]);
+              setSelectedIndex(-1);
+            }
           }
         }
       }
@@ -69,7 +99,7 @@ export default function CommandPalette() {
 
     globalThis.addEventListener("keydown", handleKeyDown);
     return () => globalThis.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, results, selectedIndex, navigate]);
+  }, [isOpen, results, selectedIndex, navigate, query]);
 
   // Auto-focus input when palette opens
   useEffect(() => {
@@ -187,30 +217,35 @@ export default function CommandPalette() {
                 <>
                   <div className="command-palette-section-title">Movies</div>
                   <div className="command-palette-list">
-                    {displayResults.slice(0, 8).map((movie, index) => (
-                      <button
-                        key={movie.id}
-                        className={`command-palette-item ${index === selectedIndex ? "selected" : ""}`}
-                        onClick={() => {
-                          navigate(`/movie/${movie.id}`);
-                          setIsOpen(false);
-                          setQuery("");
-                          setResults([]);
-                          setSelectedIndex(-1);
-                        }}
-                        onMouseEnter={() => setSelectedIndex(index)}
-                      >
-                        <img
-                          src={movie.poster_path ?? ""}
-                          alt={movie.title}
-                          className="item-poster"
-                        />
-                        <div className="item-details">
-                          <div className="item-title">{movie.title}</div>
-                          <div className="item-year">{getMovieYear(movie)}</div>
-                        </div>
-                      </button>
-                    ))}
+                    {displayResults.slice(0, 8).map((movie, index) => {
+                      const actualIndex = showRecent ? index + recentSearches.length : index;
+                      return (
+                        <button
+                          key={movie.id}
+                          className={`command-palette-item ${actualIndex === selectedIndex ? "selected" : ""}`}
+                          onClick={() => {
+                            navigate(`/movie/${movie.id}`);
+                            setIsOpen(false);
+                            setQuery("");
+                            setResults([]);
+                            setSelectedIndex(-1);
+                          }}
+                          onMouseEnter={() => setSelectedIndex(actualIndex)}
+                        >
+                          <img
+                            src={movie.poster_path ?? ""}
+                            alt={movie.title}
+                            className="item-poster"
+                          />
+                          <div className="item-details">
+                            <div className="item-title">
+                              {highlightText(movie.title, query)}
+                            </div>
+                            <div className="item-year">{getMovieYear(movie)}</div>
+                          </div>
+                        </button>
+                      );
+                    })}
                   </div>
                 </>
               )}

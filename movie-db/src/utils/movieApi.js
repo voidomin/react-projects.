@@ -33,6 +33,9 @@ const providerCooldownUntil = readStoredProviderCooldowns() || {
   [PROVIDER.OMDB]: 0,
 };
 
+const movieDetailCache = new Map();
+const MOVIE_DETAIL_CACHE_TTL_MS = 5 * 60 * 1000;
+
 let lastProviderRuntimeStatus = {
   attemptedProviders: [],
   usedProvider: null,
@@ -342,6 +345,41 @@ export async function getMovieDetails(id) {
   return runWithProviderFallback(runners);
 }
 
+export async function prefetchMovieDetails(id) {
+  if (movieDetailCache.has(id)) {
+    const entry = movieDetailCache.get(id);
+    if (Date.now() - entry.timestamp < MOVIE_DETAIL_CACHE_TTL_MS) {
+      return entry.data;
+    }
+  }
+
+  // Avoid redundant in-flight prefetches
+  const cacheKey = `prefetch::${id}`;
+  return withInFlightRequest(cacheKey, async () => {
+    try {
+      const data = await getMovieDetails(id);
+      movieDetailCache.set(id, { data, timestamp: Date.now() });
+      return data;
+    } catch {
+      return null;
+    }
+  });
+}
+
+// Override getMovieDetails to check cache first
+const originalGetMovieDetails = getMovieDetails;
+export async function getMovieDetailsCached(id) {
+  if (movieDetailCache.has(id)) {
+    const entry = movieDetailCache.get(id);
+    if (Date.now() - entry.timestamp < MOVIE_DETAIL_CACHE_TTL_MS) {
+      return entry.data;
+    }
+  }
+  const data = await originalGetMovieDetails(id);
+  movieDetailCache.set(id, { data, timestamp: Date.now() });
+  return data;
+}
+
 // --- Internal Implementation Helpers ---
 
 function pickProviderForRequest() {
@@ -447,12 +485,51 @@ async function moviesDbGetMovieDetails(id) {
 
 function normalizeMovieDbDetail(item) {
   const summary = normalizeMoviesDbSummary(item);
-  return { ...summary, genres: [], credits: { cast: [] } };
+  const genres = item?.genres?.map(g => ({ id: g.id, name: g.name })) || [];
+  return { ...summary, genres, credits: { cast: [] } };
+}
+
+function normalizeImdb236Detail(item) {
+  const summary = normalizeImdb236Summary(item);
+  const genres = (item?.genres || []).map((name, i) => ({ id: i + 1, name }));
+  
+  return {
+    ...summary,
+    genres,
+    tagline: item?.tagline || "",
+    runtime: item?.runtime || 0,
+    vote_count: item?.voteCount || 0,
+    credits: {
+      crew: (item?.directors || []).map(name => ({ job: "Director", name })),
+      cast: (item?.cast || []).map((name, i) => ({ id: i + 1, name, character: "", profile_path: null })),
+    },
+    videos: { results: [] },
+    similar: { results: [] },
+  };
 }
 
 // --- Secondary Exports ---
 
 export const getPosterUrl = (p) => (p && String(p).startsWith("http") ? p : FALLBACK_POSTER);
+
+/**
+ * Returns an array of possible poster URLs in order of preference.
+ * Helps SmartImage try multiple sources if one is broken.
+ */
+export const getPosterSources = (movie) => {
+  const sources = [];
+  if (movie.poster_path && String(movie.poster_path).startsWith("http")) {
+    sources.push(movie.poster_path);
+  }
+  
+  // If we have an ID but no poster or it's a relative path, we can't do much here 
+  // without an API call, but we can't do async inside this sync helper.
+  // In the real app, enrichResults already populates poster_path from OMDb if missing.
+  
+  sources.push(FALLBACK_POSTER);
+  return [...new Set(sources)];
+};
+
 export const getBackdropUrl = (p) => (p && String(p).startsWith("http") ? p : null);
 export function getProviderMode() { return getProviderPreference(); }
 export function setProviderMode(m) { 

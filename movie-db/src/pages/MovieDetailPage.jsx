@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import {
-  getMovieDetails,
-  getPosterUrl,
+  getMovieDetailsCached,
+  getPosterSources,
   getBackdropUrl,
 } from "../utils/movieApi";
 import { useFavorites } from "../context/useFavorites";
@@ -21,17 +21,28 @@ export default function MovieDetailPage() {
 }
 
 function MovieDetailContent({ id }) {
+  const navigate = useNavigate();
   const [movie, setMovie] = useState(null);
   const [error, setError] = useState(null);
   const [copyState, setCopyState] = useState("idle");
-  const { toggleFavorite, isFavorite } = useFavorites();
+  const { toggleFavorite, isFavorite, favorites, updateNote } = useFavorites();
+
+  const favoriteEntry = favorites.find((m) => m.id === id);
+  const isFav = !!favoriteEntry;
+  const [note, setNote] = useState("");
+
+  useEffect(() => {
+    if (favoriteEntry) {
+      setNote(favoriteEntry.notes || "");
+    }
+  }, [favoriteEntry]);
 
   useEffect(() => {
     let ignore = false;
 
     async function loadMovie() {
       try {
-        const data = await getMovieDetails(id);
+        const data = await getMovieDetailsCached(id);
 
         if (!ignore) {
           setMovie(data);
@@ -50,6 +61,16 @@ function MovieDetailContent({ id }) {
       ignore = true;
     };
   }, [id]);
+
+  const handleNoteChange = (e) => {
+    const val = e.target.value;
+    setNote(val);
+    updateNote(id, val);
+  };
+
+  const handleGenreClick = (genreName) => {
+    navigate(`/?query=${encodeURIComponent(genreName)}`);
+  };
 
   if (!movie && !error) {
     return (
@@ -79,18 +100,6 @@ function MovieDetailContent({ id }) {
               </div>
             </div>
           </div>
-          <section className="detail-section detail-section-skeleton">
-            <div className="skeleton-block skeleton-line skeleton-line-section" />
-            <div className="cast-grid">
-              {CAST_SKELETON_IDS.map((skeletonId) => (
-                <div key={skeletonId} className="cast-card">
-                  <div className="skeleton-block cast-photo" />
-                  <div className="skeleton-block skeleton-line skeleton-line-cast" />
-                  <div className="skeleton-block skeleton-line skeleton-line-cast short" />
-                </div>
-              ))}
-            </div>
-          </section>
         </div>
       </div>
     );
@@ -100,13 +109,13 @@ function MovieDetailContent({ id }) {
     return (
       <div className="error-box">
         <p>{error}</p>
+        <Link to="/" className="back-link">Back to Home</Link>
       </div>
     );
   }
 
   if (!movie) return null;
 
-  const fav = isFavorite(movie.id);
   const trailer = movie.videos?.results?.find(
     (video) => video.type === "Trailer" && video.site === "YouTube",
   );
@@ -121,7 +130,7 @@ function MovieDetailContent({ id }) {
   const votes = movie.vote_count ? movie.vote_count.toLocaleString() : "N/A";
 
   async function handleCopyLink() {
-    const shareUrl = globalThis.location?.href || `/movie/${movie.id}`;
+    const shareUrl = globalThis.location?.href || `${globalThis.location?.origin}/movie/${movie.id}`;
 
     try {
       if (!globalThis.navigator?.clipboard?.writeText) {
@@ -148,8 +157,7 @@ function MovieDetailContent({ id }) {
       <div className="detail-content">
         <div className="detail-top">
           <SmartImage
-            src={getPosterUrl(movie.poster_path, "w342")}
-            fallbackSrc={getPosterUrl(null)}
+            srcs={getPosterSources(movie)}
             alt={movie.title}
             className="detail-poster"
             wrapperClassName="detail-poster-wrap"
@@ -172,9 +180,14 @@ function MovieDetailContent({ id }) {
             </div>
             <div className="detail-genres">
               {(movie.genres ?? []).map((genre) => (
-                <span key={genre.id} className="genre-badge">
+                <button 
+                  key={genre.id} 
+                  className="genre-badge clickable"
+                  onClick={() => handleGenreClick(genre.name)}
+                  title={`Search for movies in ${genre.name}`}
+                >
                   {genre.name}
-                </span>
+                </button>
               ))}
             </div>
             <p className="detail-overview">{movie.overview}</p>
@@ -186,10 +199,10 @@ function MovieDetailContent({ id }) {
             )}
             <div className="detail-actions">
               <button
-                className={`fav-btn large ${fav ? "fav-active" : ""}`}
+                className={`fav-btn large ${isFav ? "fav-active" : ""}`}
                 onClick={() => toggleFavorite(movie)}
               >
-                {fav ? "Remove from Favorites" : "Add to Favorites"}
+                {isFav ? "♥ Saved to Favorites" : "♡ Add to Favorites"}
               </button>
               <button className="share-btn" onClick={handleCopyLink}>
                 {copyState === "copied" ? "Link copied" : "Copy link"}
@@ -205,6 +218,20 @@ function MovieDetailContent({ id }) {
                 </a>
               )}
             </div>
+
+            {isFav && (
+              <div className="personal-note-section">
+                <label htmlFor="movie-note" className="note-label">Personal thoughts:</label>
+                <textarea
+                  id="movie-note"
+                  className="note-input"
+                  placeholder="What did you think of this movie? Write a private note here..."
+                  value={note}
+                  onChange={handleNoteChange}
+                />
+              </div>
+            )}
+
             {copyState === "failed" && (
               <p className="share-status">
                 Could not copy automatically. Copy the URL from your browser
@@ -221,7 +248,7 @@ function MovieDetailContent({ id }) {
               {cast.map((actor) => (
                 <div key={actor.id} className="cast-card">
                   <SmartImage
-                    src={getPosterUrl(actor.profile_path, "w185")}
+                    src={actor.profile_path}
                     fallbackSrc="/placeholders/cast.svg"
                     alt={actor.name}
                     className="cast-photo"

@@ -1,64 +1,72 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function SmartImage({
   src,
+  srcs = [],
   alt,
   fallbackSrc = "",
   className = "",
   wrapperClassName = "",
   loading = "lazy",
 }) {
-  const imgRef = useRef(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [didFallback, setDidFallback] = useState(false);
+  const [hasFailedAll, setHasFailedAll] = useState(false);
 
-  const resolvedSrc = useMemo(
-    () => src || fallbackSrc || "",
-    [src, fallbackSrc],
-  );
+  // Combine single src and srcs array
+  const allSources = [src, ...srcs, fallbackSrc].filter(Boolean);
+  const resolvedSources = [...new Set(allSources)];
 
   useEffect(() => {
+    setCurrentIndex(0);
     setIsLoaded(false);
-    setDidFallback(false);
-  }, [resolvedSrc]);
+    setHasFailedAll(false);
+  }, [src, srcs.join(",")]);
 
-  useEffect(() => {
-    const img = imgRef.current;
-    if (img?.complete && img?.naturalWidth > 0) {
-      setIsLoaded(true);
+  function handleImageError() {
+    if (currentIndex < resolvedSources.length - 1) {
+      setCurrentIndex((prev) => prev + 1);
+    } else {
+      setHasFailedAll(true);
+      setIsLoaded(true); // Stop loading state even if failed
     }
-  }, [resolvedSrc]);
-
-  function handleImageError(event) {
-    if (
-      !didFallback &&
-      fallbackSrc &&
-      event.currentTarget.src !== fallbackSrc
-    ) {
-      setDidFallback(true);
-      event.currentTarget.src = fallbackSrc;
-      return;
-    }
-
-    setIsLoaded(true);
   }
+
+  const currentSrc = resolvedSources[currentIndex] || "";
 
   return (
     <div
       className={`smart-image-wrap ${wrapperClassName} ${isLoaded ? "loaded" : ""}`}
     >
-      <div className="smart-image-skeleton" aria-hidden="true" />
-      <img
-        ref={imgRef}
-        src={resolvedSrc}
+      <AnimatePresence>
+        {!isLoaded && (
+          <motion.div
+            key="skeleton"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="smart-image-skeleton"
+            aria-hidden="true"
+          />
+        )}
+      </AnimatePresence>
+
+      <motion.img
+        key={currentSrc}
+        src={currentSrc}
         alt={alt}
         loading={loading}
-        className={`smart-image ${className} ${isLoaded ? "loaded" : ""} ${didFallback ? "is-fallback" : ""}`}
+        className={`smart-image ${className} ${isLoaded ? "loaded" : ""} ${hasFailedAll ? "is-failed" : ""}`}
         onLoad={() => setIsLoaded(true)}
         onError={handleImageError}
+        initial={{ opacity: 0, scale: 1.05 }}
+        animate={isLoaded ? { opacity: 1, scale: 1 } : {}}
+        transition={{ duration: 0.4, ease: "easeOut" }}
       />
-      {didFallback && (
+
+      {hasFailedAll && (
         <div className="fallback-badge" aria-hidden="true">
           No Image
         </div>
@@ -68,7 +76,8 @@ export default function SmartImage({
 }
 
 SmartImage.propTypes = {
-  src: PropTypes.string.isRequired,
+  src: PropTypes.string,
+  srcs: PropTypes.arrayOf(PropTypes.string),
   alt: PropTypes.string.isRequired,
   fallbackSrc: PropTypes.string,
   className: PropTypes.string,
