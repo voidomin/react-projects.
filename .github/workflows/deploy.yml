@@ -46,19 +46,32 @@ jobs:
           VITE_FIREBASE_APPID: ${{ secrets.VITE_FIREBASE_APPID }}
         run: npm install && npm run build
 
+      - name: Build movie-db
+        working-directory: ./movie-db
+        run: npm install && npm run build
+
       - name: Create docs folder structure
         run: |
           mkdir -p docs
           cp index.html docs/index.html
+          cp style.css docs/style.css
+          cp script.js docs/script.js
           cp favicon.svg docs/favicon.svg
+          
           mkdir -p docs/vocab
           cp -r vocab/dist/* docs/vocab/
+          
           mkdir -p docs/todo-app
           cp -r todo-app/dist/* docs/todo-app/
+          
           mkdir -p docs/pokedex
           cp -r pokedex/dist/* docs/pokedex/
+          
           mkdir -p docs/caffiend
           cp -r caffiend/dist/* docs/caffiend/
+          
+          mkdir -p docs/movie-db
+          cp -r movie-db/dist/* docs/movie-db/
 
       - name: Commit and push if changed
         run: |
