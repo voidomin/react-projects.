@@ -7,7 +7,7 @@ const DEFAULT_MOVIESDB_HOST = "moviesdatabase.p.rapidapi.com";
 const IMDB236_BASE_URL = "https://imdb236.p.rapidapi.com";
 const DEFAULT_IMDB236_HOST = "imdb236.p.rapidapi.com";
 
-const FALLBACK_POSTER = "/placeholders/poster.svg";
+const FALLBACK_POSTER = "./placeholders/poster.svg";
 
 const FEATURED_RECENT_SEEDS = ["adventure", "drama", "thriller", "comedy"];
 const FEATURED_FALLBACK_SEEDS = ["award", "festival", "indie", "story"];
@@ -529,7 +529,7 @@ export const getPosterSources = (movie) => {
   // without an API call, but we can't do async inside this sync helper.
   // In the real app, enrichResults already populates poster_path from OMDb if missing.
   
-  sources.push(FALLBACK_POSTER);
+  sources.push("./placeholders/poster.svg");
   return [...new Set(sources)];
 };
 
