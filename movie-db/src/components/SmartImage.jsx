@@ -53,23 +53,27 @@ export default function SmartImage({
         )}
       </AnimatePresence>
 
-      <motion.img
-        key={currentSrc}
-        src={currentSrc}
-        alt={alt}
-        loading={loading}
-        className={`smart-image ${className} ${isLoaded ? "loaded" : ""} ${hasFailedAll ? "is-failed" : ""}`}
-        onLoad={() => setIsLoaded(true)}
-        onError={handleImageError}
-        initial={{ opacity: 0, scale: 1.05 }}
-        animate={isLoaded ? { opacity: 1, scale: 1 } : {}}
-        transition={{ duration: 0.4, ease: "easeOut" }}
-      />
-
-      {hasFailedAll && (
-        <div className="fallback-badge" aria-hidden="true">
-          No Image
+      {hasFailedAll ? (
+        <div className="placeholder-card" aria-hidden="true">
+          <div className="placeholder-gradient" />
+          <div className="placeholder-content">
+            <span className="placeholder-title">{alt}</span>
+            <span className="placeholder-label">No Poster Available</span>
+          </div>
         </div>
+      ) : (
+        <motion.img
+          key={currentSrc}
+          src={currentSrc}
+          alt={alt}
+          loading={loading}
+          className={`smart-image ${className} ${isLoaded ? "loaded" : ""} ${hasFailedAll ? "is-failed" : ""}`}
+          onLoad={() => setIsLoaded(true)}
+          onError={handleImageError}
+          initial={{ opacity: 0, scale: 1.05 }}
+          animate={isLoaded ? { opacity: 1, scale: 1 } : {}}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+        />
       )}
     </div>
   );

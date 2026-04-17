@@ -10,7 +10,8 @@ import {
 } from "../utils/movieApi";
 import SearchBar from "../components/SearchBar";
 import MovieCard from "../components/MovieCard";
-import MediaTypeFilter from "../components/MediaTypeFilter";
+import Hero from "../components/Hero";
+import GenreFilter from "../components/GenreFilter";
 
 const HOME_SKELETON_COUNT = 10;
 const RECENT_SEARCHES_STORAGE_KEY = "movie-db-recent-searches";
@@ -125,6 +126,7 @@ export default function HomePage() {
   const [query, setQuery] = useState(initialQuery);
   const [sortBy, setSortBy] = useState("relevance");
   const [typeFilter, setTypeFilter] = useState("all");
+  const [activeGenre, setActiveGenre] = useState("");
   const [mediaType, setMediaType] = useState(() => {
     try {
       const saved = localStorage.getItem(USER_MEDIA_TYPE_PREFERENCE_KEY);
@@ -161,12 +163,28 @@ export default function HomePage() {
   }, [movies]);
 
   const hasActiveFilters =
-    typeFilter !== "all" || yearFrom !== "" || yearTo !== "";
+    typeFilter !== "all" || yearFrom !== "" || yearTo !== "" || activeGenre !== "";
   const canLoadMore = !loading && !error && page < totalPages;
+
+  const featuredMovie = useMemo(() => {
+    return movies.length > 0 ? movies[0] : null;
+  }, [movies]);
 
   const displayedMovies = useMemo(() => {
     const filteredMovies = movies.filter((movie) => {
       const movieType = movie.media_type || "movie";
+      const movieOverview = (movie.overview || "").toLowerCase();
+      const movieTitle = (movie.title || "").toLowerCase();
+
+      if (typeFilter !== "all" && movieType !== typeFilter) {
+        return false;
+      }
+
+      if (activeGenre && 
+          !movieOverview.includes(activeGenre.toLowerCase()) && 
+          !movieTitle.includes(activeGenre.toLowerCase())) {
+        return false;
+      }
       const movieYear = getMovieYear(movie);
 
       if (typeFilter !== "all" && movieType !== typeFilter) {
@@ -407,6 +425,7 @@ export default function HomePage() {
 
   function handleResetFilters() {
     setTypeFilter("all");
+    setActiveGenre("");
     setYearFrom("");
     setYearTo("");
   }
@@ -459,280 +478,97 @@ export default function HomePage() {
 
   return (
     <div className="home-page">
-      <section className="hero-section">
-        <p className="hero-kicker">Curated movie discovery</p>
-        <h1 className="hero-title">Discover films with a quieter interface.</h1>
-        <p className="hero-sub">
-          Browse featured picks, search fast, and save the titles you want to
-          revisit.
-        </p>
-        <SearchBar
-          value={searchText}
-          onChange={handleSearchInputChange}
-          onSubmit={handleSearchSubmit}
-          onClear={handleClearSearch}
-        />
-        {recentSearches.length > 0 && (
-          <div className="recent-searches" aria-label="Recent searches">
-            <div className="recent-searches-head">
-              <span className="recent-searches-label">Recent searches</span>
-              <button className="btn-link" onClick={handleClearRecentSearches}>
-                Clear
-              </button>
-            </div>
-            <div className="recent-searches-list">
-              {recentSearches.map((term) => (
-                <button
-                  key={term}
-                  className="recent-chip"
-                  onClick={() => handleSelectRecentSearch(term)}
-                >
-                  {term}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-        <div className="hero-summary">
-          <span>
-            {query
-              ? `${displayedMovies.length} results shown`
-              : `${displayedMovies.length} featured titles shown`}
-          </span>
-          <span>
-            {query ? "OMDB search results" : "Hand-picked OMDB picks"}
-          </span>
-        </div>
-      </section>
+      {!query && <Hero movie={featuredMovie} />}
 
-      {error && (
-        <div className="error-box error-state-card">
-          <p className="state-title">Something interrupted this request.</p>
-          <p className="state-body">{error}</p>
-          <p className="error-hint">
-            Make sure your <code>VITE_OMDB_API_KEY</code> is set in{" "}
-            <code>.env</code>
-          </p>
-          <div className="state-actions">
-            <button className="btn-primary" onClick={handleRetry}>
+      <section className="main-section">
+        {!query && (
+          <GenreFilter 
+            activeGenre={activeGenre} 
+            onGenreChange={setActiveGenre} 
+          />
+        )}
+
+        <div className="section-header">
+          <div className="section-info">
+            <h2>{query ? `Results for "${query}"` : "Trending Now"}</h2>
+            <p>{displayedMovies.length} titles available</p>
+          </div>
+          
+          <div className="toolbar-controls">
+            <select
+              className="sort-select"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+            >
+              <option value="relevance">Trending</option>
+              <option value="year-desc">Newest First</option>
+              <option value="year-asc">Oldest First</option>
+              <option value="title-asc">A-Z</option>
+            </select>
+          </div>
+        </div>
+
+        {error && (
+          <div className="error-box">
+            <p className="state-title">Something went wrong</p>
+            <p className="state-body">{error}</p>
+            <button className="btn-primary" onClick={handleRetry} style={{ marginTop: '1rem' }}>
               Try Again
             </button>
-            {query && (
-              <button className="btn-subtle" onClick={handleClearSearch}>
-                Reset Search
-              </button>
-            )}
           </div>
-        </div>
-      )}
+        )}
 
-      {!error && (
-        <>
-          <section
-            className="featured-panel"
-            aria-label="Featured picks controls"
-          >
-            {providerNotice && (
-              <div className={`provider-status-banner ${providerNotice.tone}`}>
-                {providerNotice.message}
-              </div>
-            )}
-            <div className="provider-mode-control-row">
-              <label className="sort-control" htmlFor="provider-mode">
-                <span className="sort-label">Provider Mode</span>
-                <select
-                  id="provider-mode"
-                  className="sort-select"
-                  value={providerMode}
-                  onChange={handleProviderModeChange}
-                >
-                  <option value="auto">Auto</option>
-                  <option value="imdb236">IMDb236</option>
-                  <option value="omdb">OMDb</option>
-                  <option value="moviesdb">MoviesDatabase</option>
-                </select>
-              </label>
-            </div>
-            <MediaTypeFilter
-              mediaType={mediaType}
-              onMediaTypeChange={handleMediaTypeChange}
-            />
-            <div className="content-toolbar">
-              <div className="section-heading-wrap">
-                <h2 className="section-title">
-                  {query ? `Results for "${query}"` : "Featured Picks"}
-                </h2>
-                <p className="section-subtitle">
-                  {query
-                    ? `${displayedMovies.length} movies matching your search`
-                    : "Hand-curated picks with quick filters"}
-                </p>
-              </div>
-              <div className="toolbar-controls">
-                <label className="sort-control" htmlFor="sort-order">
-                  <span className="sort-label">Sort</span>
-                  <select
-                    id="sort-order"
-                    className="sort-select"
-                    value={sortBy}
-                    onChange={(event) => setSortBy(event.target.value)}
-                  >
-                    <option value="relevance">Relevance</option>
-                    <option value="year-desc">Year (Newest)</option>
-                    <option value="year-asc">Year (Oldest)</option>
-                    <option value="title-asc">Title (A-Z)</option>
-                    <option value="title-desc">Title (Z-A)</option>
-                  </select>
-                </label>
-                <label className="sort-control" htmlFor="type-filter">
-                  <span className="sort-label">Type</span>
-                  <select
-                    id="type-filter"
-                    className="sort-select"
-                    value={typeFilter}
-                    onChange={(event) => setTypeFilter(event.target.value)}
-                  >
-                    {availableTypes.map((typeOption) => (
-                      <option key={typeOption} value={typeOption}>
-                        {typeOption === "all"
-                          ? "All"
-                          : `${typeOption[0].toUpperCase()}${typeOption.slice(1)}`}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              </div>
-            </div>
-            <div className="filters-row">
-              <label className="sort-control compact" htmlFor="year-from">
-                <span className="sort-label">From</span>
-                <input
-                  id="year-from"
-                  type="number"
-                  min="1900"
-                  max="2099"
-                  inputMode="numeric"
-                  className="filter-input"
-                  placeholder="e.g. 2000"
-                  value={yearFrom}
-                  onChange={(event) => setYearFrom(event.target.value)}
-                />
-              </label>
-              <label className="sort-control compact" htmlFor="year-to">
-                <span className="sort-label">To</span>
-                <input
-                  id="year-to"
-                  type="number"
-                  min="1900"
-                  max="2099"
-                  inputMode="numeric"
-                  className="filter-input"
-                  placeholder="e.g. 2025"
-                  value={yearTo}
-                  onChange={(event) => setYearTo(event.target.value)}
-                />
-              </label>
-              {hasActiveFilters && (
-                <button className="btn-subtle" onClick={handleResetFilters}>
-                  Clear Filters
-                </button>
-              )}
-            </div>
-          </section>
-          
-          <AnimatePresence mode="popLayout">
-            {loading && movies.length === 0 ? (
-              <motion.div 
-                key="skeletons"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="movie-grid movie-grid-skeleton" 
-                aria-hidden="true"
-              >
-                {HOME_SKELETON_IDS.map((skeletonId) => (
-                  <div
-                    key={skeletonId}
-                    className="movie-card movie-card-skeleton"
-                  >
-                    <div className="skeleton-block skeleton-poster" />
-                    <div className="card-info">
-                      <div className="skeleton-block skeleton-line skeleton-line-title" />
-                      <div className="skeleton-row">
-                        <div className="skeleton-block skeleton-line skeleton-line-meta" />
-                        <div className="skeleton-block skeleton-pill" />
-                      </div>
-                      <div className="skeleton-block skeleton-button" />
+        {!error && (
+          <>
+            <AnimatePresence mode="popLayout">
+              {loading && movies.length === 0 ? (
+                <div className="movie-grid" aria-hidden="true">
+                  {HOME_SKELETON_IDS.map((id) => (
+                    <div key={id} className="movie-card movie-card-skeleton">
+                      <div className="skeleton-block skeleton-poster" />
                     </div>
-                  </div>
-                ))}
-              </motion.div>
-            ) : displayedMovies.length === 0 && !loading ? (
-              <motion.div 
-                key="empty"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="empty-state search-empty-state"
-              >
-                <p className="empty-icon">No results found</p>
-                <p className="state-body">{emptyStateMessage}</p>
-                <div className="state-actions center">
-                  {query ? (
-                    <button className="btn-primary" onClick={handleClearSearch}>
-                      Show Featured Picks
-                    </button>
-                  ) : (
-                    <button className="btn-primary" onClick={handleRetry}>
-                      Reload Picks
-                    </button>
-                  )}
-                  {hasActiveFilters && (
-                    <button className="btn-subtle" onClick={handleResetFilters}>
-                      Reset Filters
-                    </button>
-                  )}
-                </div>
-              </motion.div>
-            ) : (
-              <motion.div 
-                key="grid"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="movie-grid"
-              >
-                <AnimatePresence>
-                  {displayedMovies.map((movie) => (
-                    <MovieCard key={movie.id} movie={movie} />
                   ))}
-                </AnimatePresence>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                </div>
+              ) : displayedMovies.length === 0 && !loading ? (
+                <div className="empty-state">
+                  <p className="state-body">{emptyStateMessage}</p>
+                  <button className="btn-primary" onClick={handleResetFilters} style={{ marginTop: '1rem' }}>
+                    Reset Discovery
+                  </button>
+                </div>
+              ) : (
+                <motion.div 
+                  key="grid"
+                  className="movie-grid"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                >
+                  {displayedMovies.map((movie, index) => (
+                    <MovieCard key={`${movie.id}-${index}`} movie={movie} />
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
 
-          {loading && movies.length > 0 && (
-            <div className="spinner">Loading more...</div>
-          )}
-          {canLoadMore && (
-            <div
-              ref={loadMoreTriggerRef}
-              className="load-more-wrapper"
-              aria-hidden="true"
-            />
-          )}
-        </>
-      )}
+            {loading && movies.length > 0 && (
+              <div className="spinner">Loading more...</div>
+            )}
+            
+            {canLoadMore && (
+              <div ref={loadMoreTriggerRef} style={{ height: '100px' }} />
+            )}
+          </>
+        )}
+      </section>
 
       <AnimatePresence>
         {showScrollTop && (
           <motion.button
-            initial={{ opacity: 0, scale: 0.8, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.8, y: 20 }}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
             className="scroll-top-btn"
             onClick={scrollToTop}
-            aria-label="Scroll to top"
-            title="Scroll to top"
           >
             ↑
           </motion.button>

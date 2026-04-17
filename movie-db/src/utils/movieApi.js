@@ -385,9 +385,7 @@ export async function getMovieDetailsCached(id) {
 function pickProviderForRequest() {
   const pref = getProviderPreference();
   if (pref !== PROVIDER.AUTO) return pref;
-  if (hasOmdbKey()) return PROVIDER.OMDB; // Prefer OMDb in AUTO for stability
-  if (hasImdb236Key()) return PROVIDER.IMDB236;
-  return PROVIDER.MOVIESDB;
+  return PROVIDER.OMDB; // Always default to OMDb for reliable instant-load in India
 }
 
 function getProviderPriority(primary) {
@@ -417,20 +415,25 @@ function hasProviderForMode(p) {
   return hasMoviesDbKey();
 }
 
-// OMDb trend hack (OMDb doesn't have a trend API, so we search for common terms)
+// OMDb trend hack (Improved with high-quality cinematic seeds)
 async function omdbGetTrending(page, mediaType) {
-  const seeds = ["adventure", "drama", "thriller", "comedy"];
+  const seeds = ["Marvel", "Batman", "Interstellar", "Inception", "Series", "HBO", "Netflix"];
   const type = mediaType === "tv" ? "series" : mediaType === "movie" ? "movie" : undefined;
-  const year = new Date().getFullYear();
   
-  const tasks = seeds.map(s => fetchOmdb({ s, type, y: year }));
+  const tasks = seeds.map(s => fetchOmdb({ s, type }));
   const responses = await Promise.allSettled(tasks);
   const candidates = [];
   responses.forEach(r => { if (r.status === "fulfilled") candidates.push(...(r.value.Search || [])); });
   
-  const summaries = candidates.map(normalizeOmdbSummary);
+  // Sort by year to feel more "trending"
+  const summaries = candidates.map(normalizeOmdbSummary).sort((a,b) => {
+    const yearA = parseInt(a.release_date.slice(0,4)) || 0;
+    const yearB = parseInt(b.release_date.slice(0,4)) || 0;
+    return yearB - yearA;
+  });
+  
   const start = (page - 1) * FEATURED_PAGE_SIZE;
-  return { results: summaries.slice(start, start + FEATURED_PAGE_SIZE), total_pages: 5 };
+  return { results: summaries.slice(start, start + FEATURED_PAGE_SIZE), total_pages: 10 };
 }
 
 async function omdbSearchMovies(query, page, mediaType) {

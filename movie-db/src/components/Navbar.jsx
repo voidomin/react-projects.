@@ -4,14 +4,14 @@ import { useFavorites } from "../context/useFavorites";
 import CommandPalette from "./CommandPalette";
 
 const THEME_STORAGE_KEY = "movie-db-theme";
-const THEME_OPTIONS = ["sand", "sage", "cocoa"];
+const THEME_OPTIONS = ["dark", "light"];
 
 function getInitialTheme() {
   const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
   if (THEME_OPTIONS.includes(storedTheme)) {
     return storedTheme;
   }
-  return "sand";
+  return "dark"; // Default to cinematic dark
 }
 
 export default function Navbar() {
@@ -23,18 +23,10 @@ export default function Navbar() {
     localStorage.setItem(THEME_STORAGE_KEY, theme);
   }, [theme]);
 
-  const nextThemeLabel = useMemo(() => {
-    if (theme === "sand") return "Sage";
-    if (theme === "sage") return "Cocoa";
-    return "Sand";
-  }, [theme]);
+  const nextThemeLabel = theme === "dark" ? "Light Mode" : "Dark Mode";
 
   function handleThemeToggle() {
-    setTheme((prev) => {
-      const currentIndex = THEME_OPTIONS.indexOf(prev);
-      const nextIndex = (currentIndex + 1) % THEME_OPTIONS.length;
-      return THEME_OPTIONS[nextIndex];
-    });
+    setTheme(prev => prev === "dark" ? "light" : "dark");
   }
 
   return (

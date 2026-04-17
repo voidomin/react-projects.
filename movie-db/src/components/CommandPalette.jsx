@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { searchMovies } from "../utils/movieApi";
 
 const RECENT_SEARCHES_STORAGE_KEY = "movie-db-recent-searches";
@@ -34,6 +34,15 @@ export default function CommandPalette() {
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const inputRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Close palette whenever the route changes
+  useEffect(() => {
+    setIsOpen(false);
+    setQuery("");
+    setResults([]);
+    setSelectedIndex(-1);
+  }, [location.pathname]);
 
   // Get recent searches from localStorage
   const getRecentSearches = useCallback(() => {
@@ -182,9 +191,18 @@ export default function CommandPalette() {
                 className="command-palette-input"
                 autoComplete="off"
               />
-              {isLoading && (
-                <div className="command-palette-loading" aria-hidden="true" />
-              )}
+              <div className="command-palette-controls">
+                {isLoading && (
+                  <div className="command-palette-loading" aria-hidden="true" />
+                )}
+                <button 
+                  className="command-palette-close-btn" 
+                  onClick={() => setIsOpen(false)}
+                  title="Close Search"
+                >
+                  ×
+                </button>
+              </div>
             </div>
 
             {/* Results or Recent Searches */}
@@ -221,7 +239,7 @@ export default function CommandPalette() {
                       const actualIndex = showRecent ? index + recentSearches.length : index;
                       return (
                         <button
-                          key={movie.id}
+                          key={`${movie.id}-${actualIndex}`}
                           className={`command-palette-item ${actualIndex === selectedIndex ? "selected" : ""}`}
                           onClick={() => {
                             navigate(`/movie/${movie.id}`);
@@ -232,14 +250,17 @@ export default function CommandPalette() {
                           }}
                           onMouseEnter={() => setSelectedIndex(actualIndex)}
                         >
-                          <img
-                            src={movie.poster_path ?? ""}
-                            alt={movie.title}
-                            className="item-poster"
-                          />
+                          <div className="item-poster-wrap">
+                            <img
+                              src={movie.poster_path || "/placeholders/poster.svg"}
+                              alt=""
+                              className="item-poster"
+                              onError={(e) => { e.target.src = "/placeholders/poster.svg"; }}
+                            />
+                          </div>
                           <div className="item-details">
                             <div className="item-title">
-                              {highlightText(movie.title, query)}
+                              {highlightText(movie.title || "Untitled", query)}
                             </div>
                             <div className="item-year">{getMovieYear(movie)}</div>
                           </div>
