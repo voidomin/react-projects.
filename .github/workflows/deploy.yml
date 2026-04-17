@@ -48,6 +48,10 @@ jobs:
 
       - name: Build movie-db
         working-directory: ./movie-db
+        env:
+          VITE_OMDB_API_KEY: ${{ secrets.VITE_OMDB_API_KEY }}
+          VITE_IMDB236_RAPIDAPI_KEY: ${{ secrets.VITE_IMDB236_RAPIDAPI_KEY }}
+          VITE_MOVIESDB_RAPIDAPI_KEY: ${{ secrets.VITE_MOVIESDB_RAPIDAPI_KEY }}
         run: npm ci --ignore-scripts && npm run build
 
       - name: Create docs folder structure
