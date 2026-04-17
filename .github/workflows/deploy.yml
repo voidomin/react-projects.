@@ -25,15 +25,15 @@ jobs:
 
       - name: Build vocab
         working-directory: ./vocab
-        run: npm install && npm run build
+        run: npm ci --ignore-scripts && npm run build
 
       - name: Build todo-app
         working-directory: ./todo-app
-        run: npm install && npm run build
+        run: npm ci --ignore-scripts && npm run build
 
       - name: Build pokedex
         working-directory: ./pokedex
-        run: npm install && npm run build
+        run: npm ci --ignore-scripts && npm run build
 
       - name: Build caffiend
         working-directory: ./caffiend
@@ -44,11 +44,11 @@ jobs:
           VITE_FIREBASE_STORAGEBUCKET: ${{ secrets.VITE_FIREBASE_STORAGEBUCKET }}
           VITE_FIREBASE_MESSAGINGSENDERID: ${{ secrets.VITE_FIREBASE_MESSAGINGSENDERID }}
           VITE_FIREBASE_APPID: ${{ secrets.VITE_FIREBASE_APPID }}
-        run: npm install && npm run build
+        run: npm ci --ignore-scripts && npm run build
 
       - name: Build movie-db
         working-directory: ./movie-db
-        run: npm install && npm run build
+        run: npm ci --ignore-scripts && npm run build
 
       - name: Create docs folder structure
         run: |
