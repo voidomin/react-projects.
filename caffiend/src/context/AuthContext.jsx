@@ -30,39 +30,51 @@ export function AuthProvider(props) {
   const [globalData, setGlobalData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const signup = useCallback((email, password) => signupUser(email, password), []);
+  const signup = useCallback(
+    (email, password) => signupUser(email, password),
+    [],
+  );
 
-  const login = useCallback((email, password) => loginUser(email, password), []);
+  const login = useCallback(
+    (email, password) => loginUser(email, password),
+    [],
+  );
 
-  const writeData = useCallback(async (data) => {
-    if (!data || !Object.keys(data).length) {
-      return;
-    }
-    try {
-      const docRef = doc(db, "users", globalUser.uid);
-      await setDoc(docRef, data, { merge: true });
-    } catch (err) {
-      console.log(err.message);
-    }
-  }, [globalUser]);
+  const writeData = useCallback(
+    async (data) => {
+      if (!data || !Object.keys(data).length) {
+        return;
+      }
+      try {
+        const docRef = doc(db, "users", globalUser.uid);
+        await setDoc(docRef, data, { merge: true });
+      } catch (err) {
+        console.log(err.message);
+      }
+    },
+    [globalUser],
+  );
 
-  const deleteData = useCallback(async (timestamp) => {
-    if (!timestamp) {
-      return;
-    }
-    try {
-      const docRef = doc(db, "users", globalUser.uid);
-      await updateDoc(docRef, {
-        [timestamp]: deleteField(),
-      });
-      // Update local state to reflect change immediately
-      const newData = { ...globalData };
-      delete newData[timestamp];
-      setGlobalData(newData);
-    } catch (err) {
-      console.log(err.message);
-    }
-  }, [globalUser, globalData]);
+  const deleteData = useCallback(
+    async (timestamp) => {
+      if (!timestamp) {
+        return;
+      }
+      try {
+        const docRef = doc(db, "users", globalUser.uid);
+        await updateDoc(docRef, {
+          [timestamp]: deleteField(),
+        });
+        // Update local state to reflect change immediately
+        const newData = { ...globalData };
+        delete newData[timestamp];
+        setGlobalData(newData);
+      } catch (err) {
+        console.log(err.message);
+      }
+    },
+    [globalUser, globalData],
+  );
 
   const logout = useCallback(() => {
     setGlobalUser(null);
@@ -82,7 +94,16 @@ export function AuthProvider(props) {
       writeData,
       deleteData,
     }),
-    [globalUser, globalData, isLoading, signup, login, logout, writeData, deleteData],
+    [
+      globalUser,
+      globalData,
+      isLoading,
+      signup,
+      login,
+      logout,
+      writeData,
+      deleteData,
+    ],
   );
 
   useEffect(() => {

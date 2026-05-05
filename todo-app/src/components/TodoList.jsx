@@ -2,9 +2,15 @@ import { useRef } from "react";
 import PropTypes from "prop-types";
 import { TodoCard } from "./TodoCard";
 
-export function TodoList(props) {
-  const { todos, selectedTab, handleReorderTodos } = props;
-
+export function TodoList({
+  todos,
+  selectedTab,
+  handleReorderTodos,
+  handleDeleteTodo,
+  handleEditTodo,
+  handleCompleteTodo,
+  handleUpdateTodo,
+}) {
   const dragItem = useRef(null);
   const dragOverItem = useRef(null);
 
@@ -57,10 +63,10 @@ export function TodoList(props) {
   }
 
   return (
-    <>
+    <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
       {filterTodosList.map((todo) => {
         return (
-          <div
+          <li
             key={todo.id}
             draggable
             onDragStart={() => (dragItem.current = todo.id)}
@@ -68,22 +74,19 @@ export function TodoList(props) {
             onDragEnd={handleSort}
             onDragOver={(e) => e.preventDefault()}
             style={{ cursor: "move" }}
-            tabIndex={0}
             aria-label={`Reorder ${todo.input}`}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                dragItem.current = todo.id;
-                dragOverItem.current = todo.id;
-                handleSort();
-              }
-            }}
           >
-            <TodoCard {...props} todo={todo} />
-          </div>
+            <TodoCard
+              todo={todo}
+              handleDeleteTodo={handleDeleteTodo}
+              handleEditTodo={handleEditTodo}
+              handleCompleteTodo={handleCompleteTodo}
+              handleUpdateTodo={handleUpdateTodo}
+            />
+          </li>
         );
       })}
-    </>
+    </ul>
   );
 }
 

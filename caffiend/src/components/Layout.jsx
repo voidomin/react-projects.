@@ -4,9 +4,7 @@ import Modal from "./Modal";
 import { useAuth } from "../context/auth";
 import PropTypes from "prop-types";
 
-export default function Layout(props) {
-  const { children } = props;
-
+export default function Layout({ children }) {
   const [showModal, setShowModal] = useState(false);
 
   const { globalUser, logout } = useAuth();
