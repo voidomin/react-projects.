@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ===== LOADING SCREEN =====
   const loadingScreen = document.getElementById("loading-screen");
   const loaderProgress = document.getElementById("loader-progress");
-  
+
   if (loadingScreen) {
     let progress = 0;
     const interval = setInterval(() => {
@@ -31,14 +31,19 @@ document.addEventListener("DOMContentLoaded", () => {
   // ===== THEME MANAGEMENT =====
   const body = document.body;
   const themeBtns = document.querySelectorAll(".theme-btn");
-  
+
   const setTheme = (theme, silent = true) => {
     // Remove all theme classes
-    body.classList.remove("dark-mode", "matrix-theme", "retro-theme", "greyscale-theme");
-    
+    body.classList.remove(
+      "dark-mode",
+      "ocean-theme",
+      "sunset-theme",
+      "mono-theme",
+    );
+
     // Deactivate all buttons
-    themeBtns.forEach(btn => btn.classList.remove("active"));
-    
+    themeBtns.forEach((btn) => btn.classList.remove("active"));
+
     let displayTheme = theme.replace("-theme", "").toUpperCase();
 
     if (theme === "light") {
@@ -48,12 +53,13 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       const themeClass = theme === "dark" ? "dark-mode" : theme;
       body.classList.add(themeClass);
-      
-      const btnId = theme === "dark" ? "dark-btn" : `${theme.replace("-theme", "")}-btn`;
+
+      const btnId =
+        theme === "dark" ? "dark-btn" : `${theme.replace("-theme", "")}-btn`;
       const activeBtn = document.getElementById(btnId);
       if (activeBtn) activeBtn.classList.add("active");
     }
-    
+
     localStorage.setItem("studio-theme", theme);
     if (!silent) showNotification(`${displayTheme} MODE ACTIVATED`);
   };
@@ -62,7 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const savedTheme = localStorage.getItem("studio-theme") || "light";
   setTheme(savedTheme);
 
-  themeBtns.forEach(btn => {
+  themeBtns.forEach((btn) => {
     btn.addEventListener("click", () => {
       const themeId = btn.id.replace("-btn", "");
       let finalTheme = themeId;
@@ -81,27 +87,38 @@ document.addEventListener("DOMContentLoaded", () => {
       notification.className = "notification";
       document.body.appendChild(notification);
     }
-    
+
     notification.textContent = message;
     notification.classList.add("show");
-    
+
     setTimeout(() => {
       notification.classList.remove("show");
     }, 3000);
   }
 
   // ===== EASTER EGGS (RESTORED) =====
-  
+
   // 1. Konami Code
-  const konamiCode = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
+  const konamiCode = [
+    "ArrowUp",
+    "ArrowUp",
+    "ArrowDown",
+    "ArrowDown",
+    "ArrowLeft",
+    "ArrowRight",
+    "ArrowLeft",
+    "ArrowRight",
+    "b",
+    "a",
+  ];
   let konamiIndex = 0;
-  
+
   // 2. Secret words
   let keyBuffer = "";
   const secrets = {
-    "matrix": "matrix-theme",
-    "retro": "retro-theme",
-    "grey": "greyscale-theme"
+    ocean: "ocean-theme",
+    sunset: "sunset-theme",
+    mono: "mono-theme",
   };
 
   document.addEventListener("keydown", (e) => {
@@ -120,7 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Word check
     keyBuffer += e.key.toLowerCase();
     if (keyBuffer.length > 10) keyBuffer = keyBuffer.slice(-10);
-    
+
     for (const [word, theme] of Object.entries(secrets)) {
       if (keyBuffer.includes(word)) {
         setTheme(theme, false);
@@ -140,7 +157,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function cycleThemes() {
-    const themes = ["light", "dark", "matrix-theme", "retro-theme", "greyscale-theme"];
+    const themes = [
+      "light",
+      "dark",
+      "ocean-theme",
+      "sunset-theme",
+      "mono-theme",
+    ];
     const currentTheme = localStorage.getItem("studio-theme") || "light";
     let nextIndex = (themes.indexOf(currentTheme) + 1) % themes.length;
     setTheme(themes[nextIndex], false);
@@ -148,13 +171,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 4. Confetti Effect
   function createConfetti() {
-    const colors = ["#ff6b35", "#f7931e", "#ff8a5c", "#00ff41", "#ff00ff", "#00ffff"];
+    const colors = [
+      "#ff6b35",
+      "#f7931e",
+      "#ff8a5c",
+      "#00ff41",
+      "#ff00ff",
+      "#00ffff",
+    ];
     for (let i = 0; i < 50; i++) {
       const confetti = document.createElement("div");
       confetti.style.position = "fixed";
       confetti.style.width = "10px";
       confetti.style.height = "10px";
-      confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      confetti.style.backgroundColor =
+        colors[Math.floor(Math.random() * colors.length)];
       confetti.style.left = Math.random() * 100 + "vw";
       confetti.style.top = "-20px";
       confetti.style.borderRadius = "50%";
@@ -162,13 +193,19 @@ document.addEventListener("DOMContentLoaded", () => {
       confetti.style.pointerEvents = "none";
       document.body.appendChild(confetti);
 
-      const animation = confetti.animate([
-        { transform: `translate3d(0,0,0) rotate(0deg)`, opacity: 1 },
-        { transform: `translate3d(${(Math.random() - 0.5) * 200}px, ${globalThis.innerHeight + 20}px, 0) rotate(${Math.random() * 360}deg)`, opacity: 0 }
-      ], {
-        duration: Math.random() * 2000 + 1000,
-        easing: "cubic-bezier(0, .9, .6, 1)"
-      });
+      const animation = confetti.animate(
+        [
+          { transform: `translate3d(0,0,0) rotate(0deg)`, opacity: 1 },
+          {
+            transform: `translate3d(${(Math.random() - 0.5) * 200}px, ${globalThis.innerHeight + 20}px, 0) rotate(${Math.random() * 360}deg)`,
+            opacity: 0,
+          },
+        ],
+        {
+          duration: Math.random() * 2000 + 1000,
+          easing: "cubic-bezier(0, .9, .6, 1)",
+        },
+      );
 
       animation.onfinish = () => confetti.remove();
     }
@@ -176,23 +213,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ===== STICKY HEADER SYNC =====
   const topBar = document.querySelector(".top-bar");
-  
+  const topBarContainer = document.querySelector(".top-bar-container");
+  const scrollTopBtn = document.querySelector(".scroll-top");
+  let ticking = false;
+
   const handleScroll = () => {
+    if (!topBar || !topBarContainer) return;
+
     const scrollPos = globalThis.scrollY;
-    
+
     if (scrollPos > 40) {
       topBar.classList.add("sticky");
+      topBarContainer.classList.add("sticky");
     } else {
       topBar.classList.remove("sticky");
+      topBarContainer.classList.remove("sticky");
     }
 
     // Scroll Progress
-    const scrollPercent = (scrollPos / (document.documentElement.scrollHeight - globalThis.innerHeight)) * 100;
+    const scrollPercent =
+      (scrollPos /
+        (document.documentElement.scrollHeight - globalThis.innerHeight)) *
+      100;
     const progressBar = document.querySelector(".scroll-progress");
     if (progressBar) progressBar.style.width = `${scrollPercent}%`;
 
     // Scroll Top Visibility
-    const scrollTopBtn = document.querySelector(".scroll-top");
     if (scrollTopBtn) {
       if (scrollPos > 400) {
         scrollTopBtn.classList.add("visible");
@@ -200,18 +246,36 @@ document.addEventListener("DOMContentLoaded", () => {
         scrollTopBtn.classList.remove("visible");
       }
     }
+
+    ticking = false;
   };
 
-  globalThis.addEventListener("scroll", handleScroll, { passive: true });
+  globalThis.addEventListener(
+    "scroll",
+    () => {
+      if (!ticking) {
+        globalThis.requestAnimationFrame(handleScroll);
+        ticking = true;
+      }
+    },
+    { passive: true },
+  );
+  handleScroll();
+
+  if (scrollTopBtn) {
+    scrollTopBtn.addEventListener("click", () => {
+      globalThis.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
 
   // ===== PARTICLE SYSTEM =====
   const initParticles = () => {
     const canvas = document.getElementById("particle-canvas");
     if (!canvas) return;
-    
+
     const ctx = canvas.getContext("2d");
     let particlesArray = [];
-    
+
     const mouse = { x: null, y: null, radius: 100 };
     globalThis.addEventListener("mousemove", (e) => {
       mouse.x = e.x;
@@ -226,7 +290,9 @@ document.addEventListener("DOMContentLoaded", () => {
     resize();
 
     class Particle {
-      constructor() { this.reset(); }
+      constructor() {
+        this.reset();
+      }
       reset() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
@@ -253,7 +319,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particlesArray.forEach(p => {
+      particlesArray.forEach((p) => {
         p.update();
         p.draw();
       });
@@ -265,7 +331,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ===== 3D CARD TILT =====
   const cards = document.querySelectorAll(".app-card");
-  cards.forEach(card => {
+  cards.forEach((card) => {
     card.addEventListener("mousemove", (e) => {
       const rect = card.getBoundingClientRect();
       const x = e.clientX - rect.left;
@@ -277,7 +343,8 @@ document.addEventListener("DOMContentLoaded", () => {
       card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-8px)`;
     });
     card.addEventListener("mouseleave", () => {
-      card.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0deg)";
+      card.style.transform =
+        "perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0deg)";
     });
   });
 
