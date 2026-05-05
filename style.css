@@ -45,43 +45,43 @@ body.dark-mode {
   --accent-tertiary: #7bc4ff;
 }
 
-/* Ocean Glow Theme */
-body.ocean-theme {
-  --bg-primary: linear-gradient(140deg, #f1f8ff 0%, #e7f4ff 48%, #e8fbf4 100%);
-  --text-primary: #103149;
-  --text-secondary: rgba(16, 49, 73, 0.66);
-  --card-bg: rgba(255, 255, 255, 0.88);
-  --glass-bg: rgba(237, 250, 255, 0.72);
-  --accent-primary: #1c92d2;
-  --accent-secondary: #26c485;
-  --accent-tertiary: #4ab8e8;
-  --ink: #103149;
+/* Matrix Theme */
+body.matrix-theme {
+  --bg-primary: linear-gradient(140deg, #000000 0%, #001a00 50%, #000d00 100%);
+  --text-primary: #00ff41;
+  --text-secondary: rgba(0, 255, 65, 0.6);
+  --card-bg: rgba(0, 20, 0, 0.9);
+  --glass-bg: rgba(0, 30, 0, 0.8);
+  --accent-primary: #00ff41;
+  --accent-secondary: #00cc33;
+  --accent-tertiary: #00ff66;
+  --ink: #00ff41;
 }
 
-/* Sunset Studio Theme */
-body.sunset-theme {
-  --bg-primary: linear-gradient(140deg, #fff4ea 0%, #ffe6d2 52%, #ffe0de 100%);
-  --text-primary: #462612;
-  --text-secondary: rgba(70, 38, 18, 0.68);
-  --card-bg: rgba(255, 255, 255, 0.88);
-  --glass-bg: rgba(255, 243, 236, 0.72);
-  --accent-primary: #ef6c2f;
-  --accent-secondary: #ff9f43;
-  --accent-tertiary: #f77f72;
-  --ink: #462612;
+/* Retro 80s Theme */
+body.retro-theme {
+  --bg-primary: linear-gradient(140deg, #1a0033 0%, #330066 50%, #660099 100%);
+  --text-primary: #ff00ff;
+  --text-secondary: rgba(255, 0, 255, 0.7);
+  --card-bg: rgba(51, 0, 102, 0.9);
+  --glass-bg: rgba(102, 0, 153, 0.7);
+  --accent-primary: #ff00ff;
+  --accent-secondary: #00ffff;
+  --accent-tertiary: #ffff00;
+  --ink: #ff00ff;
 }
 
-/* Mono Calm Theme */
-body.mono-theme {
-  --bg-primary: linear-gradient(140deg, #f7f7f8 0%, #eceef1 50%, #e5e7eb 100%);
-  --text-primary: #23262d;
-  --text-secondary: rgba(35, 38, 45, 0.62);
-  --card-bg: rgba(255, 255, 255, 0.9);
-  --glass-bg: rgba(247, 247, 248, 0.72);
-  --accent-primary: #4b5563;
-  --accent-secondary: #6b7280;
-  --accent-tertiary: #9aa0a9;
-  --ink: #23262d;
+/* Greyscale Theme */
+body.greyscale-theme {
+  --bg-primary: linear-gradient(140deg, #1a1a1a 0%, #2d2d2d 50%, #1f1f1f 100%);
+  --text-primary: #e0e0e0;
+  --text-secondary: rgba(224, 224, 224, 0.6);
+  --card-bg: rgba(40, 40, 40, 0.9);
+  --glass-bg: rgba(50, 50, 50, 0.7);
+  --accent-primary: #888888;
+  --accent-secondary: #aaaaaa;
+  --accent-tertiary: #999999;
+  --ink: #e0e0e0;
 }
 
 * {
