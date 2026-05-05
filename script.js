@@ -157,7 +157,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function cycleThemes() {
-    const themes = ["light", "dark", "matrix-theme", "retro-theme", "greyscale-theme"];
+    const themes = [
+      "light",
+      "dark",
+      "matrix-theme",
+      "retro-theme",
+      "greyscale-theme",
+    ];
     const currentTheme = localStorage.getItem("studio-theme") || "light";
     let nextIndex = (themes.indexOf(currentTheme) + 1) % themes.length;
     setTheme(themes[nextIndex], false);
