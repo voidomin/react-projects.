@@ -1,4 +1,4 @@
-# MovieDB Backlog
+# Movie DB Backlog
 
 ## Phase One
 
@@ -29,4 +29,4 @@
 ## Notes
 
 - OMDB works better for this project in India than TMDB without a VPN
-- The root landing page `index.html` still has separate CSS and lint issues outside the MovieDB app
+- Keep deployment and environment variables documented in the repo root and/or this folder
