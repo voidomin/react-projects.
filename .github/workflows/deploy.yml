@@ -1,23 +1,23 @@
-name: Deploy All React Apps to GitHub Pages
+name: Deploy GitHub Pages
 
 on:
   push:
     branches: [main]
-    paths-ignore:
-      - "docs/**"
   workflow_dispatch:
 
 concurrency:
-  group: deploy-${{ github.ref }}
+  group: pages-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,6 +26,16 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
+          cache: npm
+          cache-dependency-path: |
+            vocab/package-lock.json
+            todo-app/package-lock.json
+            pokedex/package-lock.json
+            caffiend/package-lock.json
+            movie-db/package-lock.json
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
 
       - name: Build vocab
         working-directory: ./vocab
@@ -58,32 +68,43 @@ jobs:
           VITE_MOVIESDB_RAPIDAPI_KEY: ${{ secrets.VITE_MOVIESDB_RAPIDAPI_KEY }}
         run: npm ci --ignore-scripts && npm run build
 
-      - name: Create docs folder structure
+      - name: Assemble Pages artifact
         run: |
-          mkdir -p docs
-          cp index.html docs/index.html
-          cp style.css docs/style.css
-          cp script.js docs/script.js
-          cp favicon.svg docs/favicon.svg
-          
-          mkdir -p docs/vocab
-          cp -r vocab/dist/* docs/vocab/
-          
-          mkdir -p docs/todo-app
-          cp -r todo-app/dist/* docs/todo-app/
-          
-          mkdir -p docs/pokedex
-          cp -r pokedex/dist/* docs/pokedex/
-          
-          mkdir -p docs/caffiend
-          cp -r caffiend/dist/* docs/caffiend/
-          
-          mkdir -p docs/movie-db
-          cp -r movie-db/dist/* docs/movie-db/
+          rm -rf dist-pages
+          mkdir -p dist-pages
+          cp index.html dist-pages/index.html
+          cp style.css dist-pages/style.css
+          cp script.js dist-pages/script.js
+          cp favicon.svg dist-pages/favicon.svg
 
-      - name: Commit and push if changed
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add docs
-          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: update docs folder with latest builds" && git push)
+          mkdir -p dist-pages/vocab
+          cp -r vocab/dist/* dist-pages/vocab/
+
+          mkdir -p dist-pages/todo-app
+          cp -r todo-app/dist/* dist-pages/todo-app/
+
+          mkdir -p dist-pages/pokedex
+          cp -r pokedex/dist/* dist-pages/pokedex/
+
+          mkdir -p dist-pages/caffiend
+          cp -r caffiend/dist/* dist-pages/caffiend/
+
+          mkdir -p dist-pages/movie-db
+          cp -r movie-db/dist/* dist-pages/movie-db/
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist-pages
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

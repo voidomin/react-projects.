@@ -1,34 +1,52 @@
-# React Full Course Projects
+# React Projects (Vite + React)
 
-This repository contains three React applications built and enhanced during the course, demonstrating various levels of complexity and state management.
+A multi-app repo (each app is a standalone Vite project) published together to GitHub Pages.
 
-## 1. ☕ Caffiend
-A full-stack coffee tracking application built with **React** and **Firebase**.
-- **Auth**: Secure Sign Up & Login.
-- **Data**: Real-time Firestore updates and history tracking.
-- **Analytics**: Visualize daily caffeine intake and costs.
+## Apps
 
-## 2. 🟢 Pokedex
-A feature-rich Pokedex utilizing the **PokeAPI**.
-- **Search**: Filter Pokemon by name or number.
-- **Gen 2 Support**: View details for the first 251 Pokemon.
-- **Interactive**: Evolution chains, type effectiveness, and audio cries.
+- Landing page (root)
+- `caffiend/` — coffee tracker (Firebase)
+- `movie-db/` — movie discovery app (OMDB + RapidAPI)
+- `pokedex/` — PokeAPI explorer
+- `todo-app/` — task manager
+- `vocab/` — vocab trainer
 
-## 3. ✅ Todo App
-A robust task management application with local persistence.
-- **Categories**: Tag tasks (Work, Personal, General).
-- **Tabs**: Filter by Active or Completed status.
-- **CRUD**: Edit, delete, and reorder tasks easily.
+## Local development
 
-## 🚀 How to Run
-
-Each project is a standalone Vite application. navigate to the folder and run:
+Each app runs independently:
 
 ```bash
-# Example for Caffiend
 cd caffiend
 npm install
 npm run dev
 ```
 
-Repeat the same commands for `pokedex` or `todo-app`.
+Repeat for any other folder (e.g. `movie-db`, `pokedex`, `todo-app`, `vocab`).
+
+## Deployment (GitHub Pages)
+
+GitHub Pages is deployed via GitHub Actions using an artifact build (no committed build output).
+
+- Workflow: `.github/workflows/deploy.yml`
+- Output directory assembled in CI: `dist-pages/` (ignored by git)
+
+One-time setup (repo settings):
+
+1. Go to **Settings → Pages**
+2. Set **Build and deployment → Source** to **GitHub Actions**
+
+### Required secrets
+
+These are used in CI during `npm run build`:
+
+- Caffiend:
+	- `VITE_FIREBASE_APIKEY`
+	- `VITE_FIREBASE_AUTHDOMAIN`
+	- `VITE_FIREBASE_PROJECTID`
+	- `VITE_FIREBASE_STORAGEBUCKET`
+	- `VITE_FIREBASE_MESSAGINGSENDERID`
+	- `VITE_FIREBASE_APPID`
+- Movie DB:
+	- `VITE_OMDB_API_KEY`
+	- `VITE_IMDB236_RAPIDAPI_KEY`
+	- `VITE_MOVIESDB_RAPIDAPI_KEY`
