@@ -32,7 +32,76 @@ document.addEventListener("DOMContentLoaded", () => {
   const body = document.body;
   const themeBtns = document.querySelectorAll(".theme-btn");
 
+  const themeConfig = {
+    light: {
+      className: null,
+      storage: "light",
+      label: "LIGHT",
+      buttonId: "light-btn",
+    },
+    dark: {
+      className: "dark-mode",
+      storage: "dark",
+      label: "DARK",
+      buttonId: "dark-btn",
+    },
+    "dark-mode": {
+      className: "dark-mode",
+      storage: "dark",
+      label: "DARK",
+      buttonId: "dark-btn",
+    },
+    matrix: {
+      className: "matrix-theme",
+      storage: "matrix-theme",
+      label: "MATRIX",
+      buttonId: "matrix-btn",
+    },
+    "matrix-theme": {
+      className: "matrix-theme",
+      storage: "matrix-theme",
+      label: "MATRIX",
+      buttonId: "matrix-btn",
+    },
+    retro: {
+      className: "retro-theme",
+      storage: "retro-theme",
+      label: "RETRO",
+      buttonId: "retro-btn",
+    },
+    "retro-theme": {
+      className: "retro-theme",
+      storage: "retro-theme",
+      label: "RETRO",
+      buttonId: "retro-btn",
+    },
+    grey: {
+      className: "greyscale-theme",
+      storage: "greyscale-theme",
+      label: "GREYSCALE",
+      buttonId: "greyscale-btn",
+    },
+    greyscale: {
+      className: "greyscale-theme",
+      storage: "greyscale-theme",
+      label: "GREYSCALE",
+      buttonId: "greyscale-btn",
+    },
+    "greyscale-theme": {
+      className: "greyscale-theme",
+      storage: "greyscale-theme",
+      label: "GREYSCALE",
+      buttonId: "greyscale-btn",
+    },
+  };
+
+  const resolveTheme = (theme) => {
+    return themeConfig[theme] || themeConfig.light;
+  };
+
   const setTheme = (theme, silent = true) => {
+    const resolved = resolveTheme(theme);
+
     // Remove all theme classes
     body.classList.remove(
       "dark-mode",
@@ -44,24 +113,15 @@ document.addEventListener("DOMContentLoaded", () => {
     // Deactivate all buttons
     themeBtns.forEach((btn) => btn.classList.remove("active"));
 
-    let displayTheme = theme.replace("-theme", "").toUpperCase();
-
-    if (theme === "light") {
-      const lightBtn = document.getElementById("light-btn");
-      if (lightBtn) lightBtn.classList.add("active");
-      displayTheme = "LIGHT";
-    } else {
-      const themeClass = theme === "dark" ? "dark-mode" : theme;
-      body.classList.add(themeClass);
-
-      const btnId =
-        theme === "dark" ? "dark-btn" : `${theme.replace("-theme", "")}-btn`;
-      const activeBtn = document.getElementById(btnId);
-      if (activeBtn) activeBtn.classList.add("active");
+    if (resolved.className) {
+      body.classList.add(resolved.className);
     }
 
-    localStorage.setItem("studio-theme", theme);
-    if (!silent) showNotification(`${displayTheme} MODE ACTIVATED`);
+    const activeBtn = document.getElementById(resolved.buttonId);
+    if (activeBtn) activeBtn.classList.add("active");
+
+    localStorage.setItem("studio-theme", resolved.storage);
+    if (!silent) showNotification(`${resolved.label} MODE ACTIVATED`);
   };
 
   // Initialize Theme
@@ -71,11 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
   themeBtns.forEach((btn) => {
     btn.addEventListener("click", () => {
       const themeId = btn.id.replace("-btn", "");
-      let finalTheme = themeId;
-      if (themeId !== "light" && themeId !== "dark") {
-        finalTheme = `${themeId}-theme`;
-      }
-      setTheme(finalTheme, false);
+      setTheme(themeId, false);
     });
   });
 
@@ -165,7 +221,8 @@ document.addEventListener("DOMContentLoaded", () => {
       "greyscale-theme",
     ];
     const currentTheme = localStorage.getItem("studio-theme") || "light";
-    let nextIndex = (themes.indexOf(currentTheme) + 1) % themes.length;
+    const normalizedCurrent = resolveTheme(currentTheme).storage;
+    let nextIndex = (themes.indexOf(normalizedCurrent) + 1) % themes.length;
     setTheme(themes[nextIndex], false);
   }
 
