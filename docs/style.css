@@ -607,22 +607,6 @@ body.dark-mode .theme-btn.active {
   background: #14b8a64d;
   color: #0f3f3b;
 }
-.badge-travel {
-  background: #ddd6fe;
-  color: #312e81;
-}
-.badge-ui {
-  background: #fde68a;
-  color: #713f12;
-}
-.badge-fitness {
-  background: #bfdbfe;
-  color: #1e3a8a;
-}
-.badge-health {
-  background: #bbf7d0;
-  color: #14532d;
-}
 
 .features {
   display: grid;
