@@ -1,15 +1,17 @@
 # React Projects (Vite + React)
 
-A multi-app repo (each app is a standalone Vite project) published together to GitHub Pages.
+A multi-app repo where each app is a standalone Vite project published together to GitHub Pages. The projects stay separate on purpose so each one can be understood and worked on independently.
 
 ## Apps
 
 - Landing page (root)
-- `caffiend/` — coffee tracker (Firebase)
-- `movie-db/` — movie discovery app (OMDB + RapidAPI)
-- `pokedex/` — PokeAPI explorer
-- `todo-app/` — task manager
-- `vocab/` — vocab trainer
+- [Caffiend](caffiend/README.md) — coffee tracker (Firebase)
+- [Movie DB](movie-db/README.md) — movie discovery app (OMDB + RapidAPI)
+- [Pokedex](pokedex/README.md) — PokeAPI explorer
+- [Todo App](todo-app/README.md) — task manager
+- [Vocab](vocab/README.md) — vocab trainer
+
+Each folder has its own README and can be opened as a separate project.
 
 ## Local development
 
@@ -23,9 +25,11 @@ npm run dev
 
 Repeat for any other folder (e.g. `movie-db`, `pokedex`, `todo-app`, `vocab`).
 
+If you only want to work on one app, go into that folder and follow its README.
+
 ## Deployment (GitHub Pages)
 
-GitHub Pages is deployed via GitHub Actions using an artifact build (no committed build output).
+GitHub Pages is deployed via GitHub Actions using an artifact build, so there is no committed build output.
 
 - Workflow: `.github/workflows/deploy.yml`
 - Output directory assembled in CI: `dist-pages/` (ignored by git)

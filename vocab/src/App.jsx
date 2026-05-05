@@ -1,15 +1,13 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Layout from "./components/Layout";
 import Header from "./components/Header";
 import VocabList from "./components/VocabList";
 import Flashcards from "./components/Flashcards";
 import ReviewQueue from "./components/ReviewQueue";
 import VocabStats from "./components/VocabStats";
-import { useVocab } from "./context/VocabContext";
 
 export default function App() {
   const [tab, setTab] = useState("manage");
-  const { items } = useVocab();
 
   return (
     <Layout>

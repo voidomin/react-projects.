@@ -1,11 +1,30 @@
 # Vocab — Local Prototype
 
-Run locally:
+Vocab is a lightweight local-first vocabulary study app that stays separate from the other projects in this repo.
 
-```bash
-cd vocab
-npm install
-npm run dev
-```
+## Features
 
-This is a lightweight local-first vocabulary study app prototype. Data is stored in `localStorage` and can be exported/imported. Firebase integration can be added later.
+- Local-first study flow
+- Data stored in `localStorage`
+- Export and import support
+
+## Getting Started
+
+1.  **Install Dependencies**
+
+    ```bash
+    npm install
+    ```
+
+2.  **Run Development Server**
+
+    ```bash
+    npm run dev
+    ```
+
+3.  **Build for Production**
+    ```bash
+    npm run build
+    ```
+
+Firebase integration can be added later if the project grows beyond the local prototype stage.

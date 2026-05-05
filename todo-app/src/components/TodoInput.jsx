@@ -1,4 +1,4 @@
-import { useState } from "react";
+import PropTypes from "prop-types";
 
 export function TodoInput(props) {
   const {
@@ -40,3 +40,11 @@ export function TodoInput(props) {
     </div>
   );
 }
+
+TodoInput.propTypes = {
+  handleAddTodo: PropTypes.func.isRequired,
+  inputValue: PropTypes.string.isRequired,
+  setInputValue: PropTypes.func.isRequired,
+  selectedCategory: PropTypes.string.isRequired,
+  setSelectedCategory: PropTypes.func.isRequired,
+};

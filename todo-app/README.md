@@ -1,6 +1,8 @@
 # Todo App
 
-A sleek and functional Todo Application built with React. Keep track of your daily tasks with this persistent, organized, and easy-to-use tool.
+A sleek and functional Todo Application built with React. It is kept as a standalone project in the repo so it stays easy to understand and maintain on its own.
+
+Keep track of your daily tasks with this persistent, organized, and easy-to-use tool.
 
 ## Features
 
@@ -22,11 +24,13 @@ A sleek and functional Todo Application built with React. Keep track of your dai
 ## Getting Started
 
 1.  **Install Dependencies**
+
     ```bash
     npm install
     ```
 
 2.  **Run Development Server**
+
     ```bash
     npm run dev
     ```

@@ -1,6 +1,8 @@
 # Caffiend
 
-Caffiend is a comprehensive coffee consumption tracker built with React and Firebase. Monitor your daily caffeine intake, visualize your history, and stay on top of your habits with a secure, cloud-synced account.
+Caffiend is a standalone coffee consumption tracker in the multi-project repo. It is built with React and Firebase, and you can work on it independently of the other apps.
+
+Monitor your daily caffeine intake, visualize your history, and stay on top of your habits with a secure, cloud-synced account.
 
 ## Features
 
@@ -25,12 +27,14 @@ Caffiend is a comprehensive coffee consumption tracker built with React and Fire
 ## Getting Started
 
 1.  **Install Dependencies**
+
     ```bash
     npm install
     ```
 
 2.  **Environment Setup**
-    Create a `.env` file in the root directory with your Firebase config keys:
+    Create a `.env` file in the `caffiend/` directory with your Firebase config keys:
+
     ```env
     VITE_FIREBASE_APIKEY=your_key
     VITE_FIREBASE_AUTHDOMAIN=your_domain
@@ -41,6 +45,7 @@ Caffiend is a comprehensive coffee consumption tracker built with React and Fire
     ```
 
 3.  **Run Development Server**
+
     ```bash
     npm run dev
     ```

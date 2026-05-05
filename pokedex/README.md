@@ -1,6 +1,8 @@
 # Pokedex
 
-A modern, responsive Pokedex application built with React and Vite. This application allows users to explore Pokemon data, managing their favorites and viewing details using the PokeAPI.
+A modern, responsive Pokedex application built with React and Vite. It is a standalone project inside the repo, so you can explore and improve it independently.
+
+This application allows users to explore Pokemon data, manage favorites, and view details using the PokeAPI.
 
 ## Features
 
@@ -23,11 +25,13 @@ A modern, responsive Pokedex application built with React and Vite. This applica
 ## Getting Started
 
 1.  **Install Dependencies**
+
     ```bash
     npm install
     ```
 
 2.  **Run Development Server**
+
     ```bash
     npm run dev
     ```

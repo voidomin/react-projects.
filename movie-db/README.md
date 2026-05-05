@@ -1,5 +1,7 @@
 # React + Vite Movie Discovery App
 
+This is a standalone movie and TV discovery app in the multi-project repo. It can be run and improved on its own without touching the other apps.
+
 ## Features
 
 ### 🎬 Content Discovery
