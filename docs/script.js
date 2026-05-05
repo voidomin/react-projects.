@@ -36,9 +36,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // Remove all theme classes
     body.classList.remove(
       "dark-mode",
-      "ocean-theme",
-      "sunset-theme",
-      "mono-theme",
+      "matrix-theme",
+      "retro-theme",
+      "greyscale-theme",
     );
 
     // Deactivate all buttons
@@ -116,9 +116,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // 2. Secret words
   let keyBuffer = "";
   const secrets = {
-    ocean: "ocean-theme",
-    sunset: "sunset-theme",
-    mono: "mono-theme",
+    matrix: "matrix-theme",
+    retro: "retro-theme",
+    grey: "greyscale-theme",
   };
 
   document.addEventListener("keydown", (e) => {
@@ -157,13 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function cycleThemes() {
-    const themes = [
-      "light",
-      "dark",
-      "ocean-theme",
-      "sunset-theme",
-      "mono-theme",
-    ];
+    const themes = ["light", "dark", "matrix-theme", "retro-theme", "greyscale-theme"];
     const currentTheme = localStorage.getItem("studio-theme") || "light";
     let nextIndex = (themes.indexOf(currentTheme) + 1) % themes.length;
     setTheme(themes[nextIndex], false);
