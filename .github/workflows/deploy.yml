@@ -3,7 +3,13 @@ name: Deploy All React Apps to GitHub Pages
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - "docs/**"
   workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: write
@@ -11,12 +17,10 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Sync with main
-        run: git pull --rebase
 
       - name: Setup Node
         uses: actions/setup-node@v4
